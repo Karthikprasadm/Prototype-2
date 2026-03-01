@@ -66,7 +66,7 @@ export function RandomObjects() {
     }, []);
 
     useEffect(() => {
-        const count = typeof window !== "undefined" && window.innerWidth < 768 ? 2 : 4;
+        const count = typeof window !== "undefined" && window.innerWidth < 768 ? 6 : 12;
         // Generate random objects after mount to avoid hydration mismatch
         const newObjects = Array.from({ length: count }).map((_, i) => {
             // Start objects outside the visible screen (edges are around +/- 25 for x, +/- 20 for y)
@@ -101,8 +101,18 @@ export function RandomObjects() {
             // Normalize direction vector
             const length = Math.sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
 
-            // Randomly select a model path
-            const randomModelPath = MODEL_PATHS[Math.floor(Math.random() * MODEL_PATHS.length)];
+            // Randomly select a model path with weighted probability (more moon rocks, fewer rockets)
+            const weights = [0.6, 0.3, 0.1]; // moon_rock, scene, rocket
+            const randomValue = Math.random();
+            let modelIndex = 0;
+            if (randomValue < weights[0]) {
+                modelIndex = 0;
+            } else if (randomValue < weights[0] + weights[1]) {
+                modelIndex = 1;
+            } else {
+                modelIndex = 2;
+            }
+            const randomModelPath = MODEL_PATHS[modelIndex];
             const config = MODEL_CONFIGS[randomModelPath] || { baseScale: 1 };
 
             return {
@@ -120,7 +130,7 @@ export function RandomObjects() {
     if (objects.length === 0 || !visible) return null;
 
     return (
-        <div className="fixed inset-0 pointer-events-none z-[2] overflow-hidden" aria-hidden>
+        <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden" aria-hidden>
             <Canvas camera={{ position: [0, 0, 15], fov: 45 }} frameloop="always" dpr={[1, 2]}>
                 <ambientLight intensity={0} />
                 <directionalLight position={[0, 10, 0]} intensity={1} />

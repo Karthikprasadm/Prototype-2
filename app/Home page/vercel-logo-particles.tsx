@@ -29,9 +29,10 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       const dpr = Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 2)
       canvas.width = w * dpr
       canvas.height = h * dpr
+      return dpr
     }
-    resize()
-    window.addEventListener("resize", resize)
+    let dpr = resize()
+    window.addEventListener("resize", () => { dpr = resize() })
     if (hideCursor) {
       document.documentElement.style.cursor = "none"
       document.body.style.cursor = "none"
@@ -168,8 +169,8 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
 
     function drawCursor() {
       if (mouse.x < 0) return
-      const cx = mouse.x
-      const cy = mouse.y
+      const cx = mouse.x * dpr
+      const cy = mouse.y * dpr
 
       starRotation += 0.012  // gentle idle spin
 
@@ -230,13 +231,15 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       for (const sw of shockwaves) {
         const progress = sw.radius / sw.maxRadius
         const alpha = (1 - progress) * 0.12
+        const sx = sw.x * dpr
+        const sy = sw.y * dpr
         ctx.beginPath()
-        ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2)
+        ctx.arc(sx, sy, sw.radius, 0, Math.PI * 2)
         ctx.strokeStyle = `rgba(180, 120, 255, ${alpha * 0.5})`
         ctx.lineWidth = 0.5 * (1 - progress)
         ctx.stroke()
         ctx.beginPath()
-        ctx.arc(sw.x, sw.y, sw.radius * 0.92, 0, Math.PI * 2)
+        ctx.arc(sx, sy, sw.radius * 0.92, 0, Math.PI * 2)
         ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`
         ctx.lineWidth = 0.5 * (1 - progress)
         ctx.stroke()
@@ -313,7 +316,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       visible = false
       cancelAnimationFrame(rafId)
       document.removeEventListener("visibilitychange", onVisibilityChange)
-      window.removeEventListener("resize", resize)
+      window.removeEventListener("resize", () => { dpr = resize() })
       if (hideCursor) {
         document.documentElement.style.cursor = ""
         document.body.style.cursor = ""
@@ -330,7 +333,8 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       style={{
         position: "fixed", top: 0, left: 0,
         width: "100vw", height: "100vh",
-        zIndex: 0,
+        zIndex: 50,
+        pointerEvents: "none",
         cursor: hideCursor ? "none" : "default",
       }}
     />

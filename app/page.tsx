@@ -1,7 +1,10 @@
 import Link from "next/link"
+import dynamic from "next/dynamic"
 import VercelLogoParticles from "./Home page/vercel-logo-particles"
 
-{/* Techfest tagline + CTA */ }
+const HackathonSectionWrapper = dynamic(() => import("@/components/hackathon-section-wrapper"), { ssr: false })
+
+{/* Techfest tagline + CTA */}
 <div className="absolute left-1/2 top-[55%] z-10 -translate-x-1/2 -translate-y-1/2 text-center">
   <p className="text-white/90 text-sm sm:text-base font-medium tracking-wide">
     Tech • Innovation • Community
@@ -15,9 +18,10 @@ import VercelLogoParticles from "./Home page/vercel-logo-particles"
 </div>
 export default function Page() {
   return (
-    <main className="relative min-h-[300vh]">
+    <main className="relative min-h-[200vh]">
       <VercelLogoParticles />
-      <div className="relative z-10 h-[300vh]" />
+      <HackathonSectionWrapper />
+      <div className="relative z-10 h-[200vh]" />
     </main>
   )
 }
