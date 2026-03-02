@@ -19,7 +19,7 @@ export default function Page() {
       </div>
       <div className="mt-[20vh] relative z-20">
         <HackathonSectionWrapper />
-        <div className="mt-8">
+        <div className="mt-2">
           <EventsSectionWrapper />
         </div>
       </div>

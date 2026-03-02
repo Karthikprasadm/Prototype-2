@@ -1,85 +1,92 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Trophy, Gamepad2, Lock, Database, Terminal, Cog, Sparkles, Brain } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
+import {
+  Trophy,
+  Gamepad2,
+  Brain,
+  Lock,
+  Database,
+  Code2,
+  Cpu,
+  Zap,
+  Network,
+  Laptop,
+  Cog,
+  Building2,
+  Briefcase,
+  Sparkles,
+} from "lucide-react"
+import { departments } from "@/lib/events-data"
 
 interface EventsSectionProps {
   scrollProgress: number
 }
 
-const CATEGORIES = [
-  {
-    id: "hackathon", title: "Grand Hackathon", short: "HACKATHON", index: "01",
-    icon: Trophy, color: "#f59e0b",
-    events: [{ name: "Grand Hackathon", flagship: true }],
-  },
-  {
-    id: "gaming", title: "Gaming & Combat", short: "GAMING", index: "02",
-    icon: Gamepad2, color: "#ef4444",
-    events: [
-      { name: "Robowars", flagship: true },
-      { name: "RC Car Racing", flagship: false },
-      { name: "Valorant", flagship: false },
-      { name: "BGMI", flagship: false },
-    ],
-  },
-  {
-    id: "ai", title: "Artificial Intelligence", short: "AI", index: "03",
-    icon: Brain, color: "#a78bfa",
-    events: [
-      { name: "The Turing Test", flagship: false },
-      { name: "Reverse Prompt Engineering", flagship: false },
-    ],
-  },
-  {
-    id: "cyber", title: "Cybersecurity", short: "CYBER", index: "04",
-    icon: Lock, color: "#4ade80",
-    events: [
-      { name: "Zero Day Arena", flagship: true },
-      { name: "Escape & Exploit", flagship: false },
-    ],
-  },
-  {
-    id: "data", title: "Data Science", short: "DATA", index: "05",
-    icon: Database, color: "#60a5fa",
-    events: [
-      { name: "Data Royale", flagship: true },
-      { name: "Data Decoded", flagship: false },
-      { name: "SDG Data Jam", flagship: false },
-      { name: "Kill Switch", flagship: false },
-    ],
-  },
-  {
-    id: "coding", title: "Coding & Logic", short: "CODING", index: "06",
-    icon: Terminal, color: "#fb923c",
-    events: [
-      { name: "Code Conundrum", flagship: false },
-      { name: "Version Control Wars", flagship: false },
-      { name: "Tech Escape Quest", flagship: false },
-      { name: "Bug Buster", flagship: false },
-    ],
-  },
-  {
-    id: "core", title: "Core Engineering", short: "CORE", index: "07",
-    icon: Cog, color: "#fbbf24",
-    events: [
-      { name: "Design. Decide. Dominate.", flagship: true },
-      { name: "Electraforge", flagship: true },
-      { name: "IoT Nexus", flagship: true },
-      { name: "Innovatrium", flagship: true },
-      { name: "Circuitrix", flagship: false },
-      { name: "Bridge IT", flagship: false },
-      { name: "Embedded Escape Room", flagship: false },
-    ],
-  },
-  {
-    id: "quiz", title: "Quiz & Ideas", short: "IDEAS", index: "08",
-    icon: Sparkles, color: "#f472b6",
-    events: [
-      { name: "Ideathon Arena", flagship: false },
-      { name: "Biznova", flagship: true },
-    ],
-  },
+const DEPARTMENT_ICONS: Record<string, LucideIcon> = {
+  aiml: Brain,
+  cy: Lock,
+  cse: Code2,
+  csds: Database,
+  ece: Cpu,
+  eee: Zap,
+  ise: Network,
+  mca: Laptop,
+  mech: Cog,
+  civil: Building2,
+  mba: Briefcase,
+  gaming: Gamepad2,
+  "grand-hackathon": Trophy,
+}
+
+const COLORS = [
+  "#f59e0b",
+  "#ef4444",
+  "#a78bfa",
+  "#4ade80",
+  "#60a5fa",
+  "#fb923c",
+  "#fbbf24",
+  "#f472b6",
+  "#22d3ee",
+  "#93c5fd",
+  "#86efac",
+  "#fca5a5",
+  "#c4b5fd",
+]
+
+const CATEGORIES = departments.map((dept, i) => ({
+  id: dept.id,
+  title: dept.fullName ?? dept.name,
+  short: dept.id === "grand-hackathon" ? "HACKATHON" : dept.name,
+  index: String(i + 1).padStart(2, "0"),
+  icon: DEPARTMENT_ICONS[dept.id] ?? Sparkles,
+  color: COLORS[i % COLORS.length],
+  events: dept.events.map((ev) => ({
+    name: ev.name,
+    flagship: ev.type === "Flagship" || ev.tag === "Grand Hackathon",
+  })),
+}))
+
+const totalEvents = departments.reduce((acc, dept) => acc + dept.events.length, 0)
+const flagshipCount = departments.reduce(
+  (acc, dept) => acc + dept.events.filter((ev) => ev.type === "Flagship" || ev.tag === "Grand Hackathon").length,
+  0
+)
+const minorCount = departments.reduce(
+  (acc, dept) => acc + dept.events.filter((ev) => ev.type === "Minor").length,
+  0
+)
+const gamingEvents = departments.find((dept) => dept.id === "gaming")?.events.length ?? 0
+
+const EVENT_SUMMARY = [
+  { n: String(departments.length).padStart(2, "0"), l: "CATEGORIES" },
+  { n: String(totalEvents), l: "EVENTS" },
+  { n: String(flagshipCount).padStart(2, "0"), l: "FLAGSHIP" },
+  { n: String(minorCount).padStart(2, "0"), l: "MINOR" },
+  { n: String(gamingEvents).padStart(2, "0"), l: "GAMING" },
+  { n: "01", l: "GRAND HACKATHON" },
 ]
 
 // Pointy-top hexagon path
@@ -90,12 +97,6 @@ function hexPath(cx: number, cy: number, r: number) {
   })
   return `M${pts.join("L")}Z`
 }
-
-const GRID_POS = [
-  { col: 0, row: 0 }, { col: 1, row: 0 }, { col: 2, row: 0 },
-  { col: 0, row: 1 }, { col: 1, row: 1 }, { col: 2, row: 1 },
-  { col: 0, row: 2 }, { col: 1, row: 2 },
-]
 
 function useWindowWidth() {
   const [w, setW] = useState(1200)
@@ -127,14 +128,20 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
   const hexR = isMobile ? Math.min(vw / 8.5, 48) : 62
   const gapX = hexR * 1.78
   const gapY = hexR * 1.54
+  const hexCols = isMobile ? 2 : 4
 
-  const centers = GRID_POS.map(({ col, row }) => ({
-    x: col * gapX + hexR + (row % 2 === 1 ? gapX * 0.5 : 0),
-    y: row * gapY + hexR,
-  }))
+  const centers = CATEGORIES.map((_, i) => {
+    const row = Math.floor(i / hexCols)
+    const col = i % hexCols
+    return {
+      x: col * gapX + hexR + (row % 2 === 1 ? gapX * 0.5 : 0),
+      y: row * gapY + hexR,
+    }
+  })
 
-  const svgW = gapX * 2 + hexR * 2
-  const svgH = gapY * 2 + hexR * 2
+  const rows = Math.max(1, Math.ceil(CATEGORIES.length / hexCols))
+  const svgW = (hexCols - 1) * gapX + hexR * 2 + gapX * 0.5
+  const svgH = (rows - 1) * gapY + hexR * 2
 
   const selectedCat = CATEGORIES.find(c => c.id === selected)!
 
@@ -145,7 +152,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      padding: isMobile ? "52px 0 52px" : "80px 0 80px",
+      padding: isMobile ? "24px 0 36px" : "44px 0 72px",
       background: "transparent",
     }}>
       <style>{`
@@ -174,14 +181,14 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
       <div style={{
         width: "100%",
         maxWidth: 1060,
-        padding: isMobile ? "0 20px 36px" : "0 32px 52px",
+        padding: isMobile ? "0 20px 24px" : "0 32px 44px",
         display: "flex",
         alignItems: isMobile ? "flex-start" : "flex-end",
         justifyContent: "space-between",
         flexDirection: isMobile ? "column" : "row",
-        gap: 16,
+        gap: isMobile ? 12 : 16,
         borderBottom: "1px solid rgba(255,255,255,0.18)",
-        marginBottom: isMobile ? 32 : 48,
+        marginBottom: isMobile ? 20 : 40,
       }}>
         <h2 style={{
           margin: 0,
@@ -201,7 +208,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
 
         <div style={{ textAlign: isMobile ? "left" : "right", flexShrink: 0 }}>
           <p style={{ margin: 0, color: "rgba(255,255,255,0.8)", fontSize: 12, fontFamily: "monospace", letterSpacing: "0.2em", lineHeight: 2 }}>
-            8 CATEGORIES<br />28+ EVENTS
+            {String(departments.length).padStart(2, "0")} CATEGORIES<br />{totalEvents} EVENTS
           </p>
         </div>
       </div>
@@ -210,8 +217,9 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
       <div style={{
         display: "flex",
         flexDirection: isMobile ? "column" : "row",
-        gap: isMobile ? 36 : 56,
+        gap: isMobile ? 24 : 52,
         alignItems: "flex-start",
+        justifyContent: "center",
         width: "100%",
         maxWidth: 1060,
         padding: isMobile ? "0 20px" : "0 32px",
@@ -352,15 +360,15 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
         </div>
 
         {/* ── EVENT PANEL ── */}
-        <div style={{ flex: 1, minWidth: 0, width: "100%" }}>
+        <div style={{ flex: isMobile ? 1 : "0 1 520px", minWidth: 0, width: "100%", maxWidth: isMobile ? "100%" : 520 }}>
 
           {/* Category label row */}
           <div style={{
             display: "flex",
             alignItems: "baseline",
             gap: 16,
-            marginBottom: 24,
-            paddingBottom: 20,
+            marginBottom: isMobile ? 16 : 22,
+            paddingBottom: isMobile ? 12 : 18,
             borderBottom: `2px solid ${selectedCat.color}`,
             transition: "border-color 0.3s ease",
           }}>
@@ -408,8 +416,8 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 16,
-                  padding: "14px 0",
+                  gap: isMobile ? 12 : 16,
+                  padding: isMobile ? "10px 0" : "12px 0",
                   borderBottom: "1px solid rgba(255,255,255,0.14)",
                   animation: `item-in 0.3s ease ${i * 0.05}s both`,
                 }}
@@ -469,29 +477,32 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
           <div style={{
             display: "flex",
             alignItems: "center",
-            gap: 24,
-            marginTop: 20,
-            paddingTop: 16,
+            gap: isMobile ? 14 : 24,
+            marginTop: isMobile ? 12 : 18,
+            paddingTop: isMobile ? 10 : 14,
             borderTop: "1px solid rgba(255,255,255,0.12)",
           }}>
             <span style={{
-              fontFamily: "monospace", fontSize: 11,
-              color: "rgba(255,255,255,0.88)", letterSpacing: "0.18em",
+              fontFamily: "monospace", fontSize: 12,
+              color: "rgba(255,255,255,0.98)", letterSpacing: "0.16em",
+              textShadow: "0 1px 8px rgba(0,0,0,0.6)",
             }}>
               {selectedCat.events.length} EVENT{selectedCat.events.length !== 1 ? "S" : ""}
             </span>
             {selectedCat.events.filter(e => e.flagship).length > 0 && (
               <span style={{
-                fontFamily: "monospace", fontSize: 11,
-                color: "rgba(255,255,255,0.88)", letterSpacing: "0.18em",
+                fontFamily: "monospace", fontSize: 12,
+                color: "rgba(255,255,255,0.98)", letterSpacing: "0.16em",
+                textShadow: "0 1px 8px rgba(0,0,0,0.6)",
               }}>
                 {selectedCat.events.filter(e => e.flagship).length} FLAGSHIP
               </span>
             )}
             <div style={{ flex: 1 }} />
             <div style={{
-              width: 8, height: 8, borderRadius: "50%",
+              width: 9, height: 9, borderRadius: "50%",
               background: selectedCat.color,
+              boxShadow: `0 0 10px ${selectedCat.color}`,
               transition: "background 0.3s",
             }} />
           </div>
@@ -501,8 +512,8 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
             display: "flex",
             flexWrap: "wrap",
             gap: 6,
-            marginTop: 28,
-            paddingTop: 20,
+            marginTop: isMobile ? 16 : 24,
+            paddingTop: isMobile ? 12 : 16,
             borderTop: "1px solid rgba(255,255,255,0.14)",
           }}>
             {CATEGORIES.map(cat => {
@@ -537,22 +548,27 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
           {/* ── Stats ── */}
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            marginTop: 20,
+            gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(3, 1fr)",
+            marginTop: isMobile ? 14 : 20,
             borderTop: "1px solid rgba(255,255,255,0.14)",
             opacity: sp > 0.4 ? 1 : 0,
             transform: sp > 0.4 ? "translateY(0)" : "translateY(8px)",
             transition: "opacity 0.5s ease, transform 0.5s ease",
           }}>
-            {[
-              { n: "08", l: "CATEGORIES" },
-              { n: "28+", l: "EVENTS" },
-              { n: "12", l: "FLAGSHIP" },
-            ].map((s, i) => (
+            {EVENT_SUMMARY.map((s, i) => (
               <div key={i} style={{
-                padding: "16px 0",
-                textAlign: i === 0 ? "left" : i === 2 ? "right" : "center",
-                borderRight: i < 2 ? "1px solid rgba(255,255,255,0.14)" : "none",
+                padding: isMobile ? "12px 0" : "16px 0",
+                textAlign: "center",
+                borderRight: isMobile
+                  ? i % 2 === 0
+                    ? "1px solid rgba(255,255,255,0.14)"
+                    : "none"
+                  : i % 3 !== 2
+                    ? "1px solid rgba(255,255,255,0.14)"
+                    : "none",
+                borderBottom: i < EVENT_SUMMARY.length - (isMobile ? 2 : 3)
+                  ? "1px solid rgba(255,255,255,0.14)"
+                  : "none",
               }}>
                 <div style={{
                   color: "white",
