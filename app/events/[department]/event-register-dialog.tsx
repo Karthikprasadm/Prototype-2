@@ -79,18 +79,18 @@ export function EventRegisterDialog({
       <DialogTrigger asChild>
         <Button
           size="sm"
-          className="mt-1 rounded-full bg-amber-400 text-black hover:bg-amber-300"
+          className="mt-1 rounded-full bg-amber-400 text-black shadow-[0_10px_30px_rgba(251,191,36,0.28)] transition-all hover:-translate-y-0.5 hover:bg-amber-300"
         >
           Register
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-xl bg-black/70 text-white border border-white/10 rounded-3xl shadow-[0_22px_70px_rgba(0,0,0,0.85)] backdrop-blur-2xl p-0">
-        <div className="rounded-t-3xl border-b border-white/[0.08] bg-gradient-to-r from-white/5 via-black/60 to-white/5 px-6 py-4">
+      <DialogContent className="max-w-2xl bg-[#020202]/95 text-white border-0 rounded-3xl shadow-[0_30px_90px_rgba(0,0,0,0.9)] backdrop-blur-2xl p-0 overflow-hidden">
+        <div className="rounded-t-3xl border-b border-white/[0.05] bg-gradient-to-r from-[#111111] via-[#080808] to-[#0f0f0f] px-6 py-5">
           <DialogHeader className="space-y-1.5">
-            <DialogTitle className="text-base sm:text-lg tracking-tight">
+            <DialogTitle className="text-xl sm:text-2xl font-semibold tracking-tight">
             Register for {eventName}
             </DialogTitle>
-            <DialogDescription className="text-xs sm:text-sm text-white/60 text-left">
+            <DialogDescription className="text-sm text-white/65 text-left">
               {departmentName} · Team size: {teamSize}
               {registrationFee != null && (
                 <> · Registration fee: ₹{registrationFee}</>
@@ -99,7 +99,7 @@ export function EventRegisterDialog({
           </DialogHeader>
         </div>
 
-        <div className="max-h-[70vh] overflow-y-auto no-scrollbar bg-black/75 rounded-b-3xl">
+        <div className="max-h-[72vh] overflow-y-auto no-scrollbar bg-[#050505]/95 rounded-b-3xl">
           <form
             onSubmit={(e) => {
               const form = e.currentTarget as HTMLFormElement
@@ -113,10 +113,10 @@ export function EventRegisterDialog({
               setErrorMessage(null)
               // TODO: hook this up to real submission or payment later
             }}
-            className="space-y-4 text-sm px-6 pb-4 pt-3"
+            className="space-y-5 text-sm px-6 pb-5 pt-4"
           >
-            <div className="space-y-3 rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-white/40">
+            <div className="space-y-3 rounded-2xl border-0 bg-gradient-to-b from-[#151515] to-[#0c0c0c] px-4 py-4">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-white/50 font-medium">
                 Participants
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -135,7 +135,7 @@ export function EventRegisterDialog({
                 return (
                   <Fragment key={`member-${memberIndex}`}>
                     <div className="space-y-1.5">
-                      <Label htmlFor={nameId}>
+                      <Label htmlFor={nameId} className="text-sm text-white/90">
                         {nameLabel}
                         {required && <span className="ml-0.5 text-red-400">*</span>}
                       </Label>
@@ -143,11 +143,11 @@ export function EventRegisterDialog({
                         id={nameId}
                         name={nameId}
                         required={required}
-                        className="bg-white/5 text-white placeholder:text-white/40 border-white/20"
+                        className="h-11 rounded-xl border-0 bg-[#30343a] text-white placeholder:text-[#aeb4bc] focus-visible:ring-0 focus-visible:outline-none focus-visible:border-transparent focus-visible:ring-offset-0"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor={usnId}>
+                      <Label htmlFor={usnId} className="text-sm text-white/90">
                         {usnLabel}
                         {required && <span className="ml-0.5 text-red-400">*</span>}
                       </Label>
@@ -155,7 +155,7 @@ export function EventRegisterDialog({
                         id={usnId}
                         name={usnId}
                         required={required}
-                        className="bg-white/5 text-white placeholder:text-white/40 border-white/20"
+                        className="h-11 rounded-xl border-0 bg-[#30343a] text-white placeholder:text-[#aeb4bc] focus-visible:ring-0 focus-visible:outline-none focus-visible:border-transparent focus-visible:ring-offset-0"
                       />
                     </div>
                   </Fragment>
@@ -164,12 +164,12 @@ export function EventRegisterDialog({
               </div>
             </div>
 
-            <div className="space-y-3 rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-3">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-white/40">
+            <div className="space-y-3 rounded-2xl border-0 bg-gradient-to-b from-[#151515] to-[#0c0c0c] px-4 py-4">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-white/50 font-medium">
                 College & contact
               </p>
               <div className="space-y-1.5">
-                <Label htmlFor="college">
+                <Label htmlFor="college" className="text-sm text-white/90">
                   College / University
                   <span className="ml-0.5 text-red-400">*</span>
                 </Label>
@@ -177,13 +177,13 @@ export function EventRegisterDialog({
                   id="college"
                   name="college"
                   required
-                  className="bg-white/5 text-white placeholder:text-white/40 border-white/20"
+                  className="h-11 rounded-xl border-0 bg-[#30343a] text-white placeholder:text-[#aeb4bc] focus-visible:ring-0 focus-visible:outline-none focus-visible:border-transparent focus-visible:ring-offset-0"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="email">
+                  <Label htmlFor="email" className="text-sm text-white/90">
                     Email
                     <span className="ml-0.5 text-red-400">*</span>
                   </Label>
@@ -193,21 +193,21 @@ export function EventRegisterDialog({
                     type="email"
                     autoComplete="email"
                     required
-                    className="bg-white/5 text-white placeholder:text-white/40 border-white/20"
+                    className="h-11 rounded-xl border-0 bg-[#30343a] text-white placeholder:text-[#aeb4bc] focus-visible:ring-0 focus-visible:outline-none focus-visible:border-transparent focus-visible:ring-offset-0"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="altEmail">Alternate email (optional)</Label>
+                  <Label htmlFor="altEmail" className="text-sm text-white/90">Alternate email (optional)</Label>
                   <Input
                     id="altEmail"
                     name="altEmail"
                     type="email"
                     autoComplete="email"
-                    className="bg-white/5 text-white placeholder:text-white/40 border-white/20"
+                    className="h-11 rounded-xl border-0 bg-[#30343a] text-white placeholder:text-[#aeb4bc] focus-visible:ring-0 focus-visible:outline-none focus-visible:border-transparent focus-visible:ring-offset-0"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="phone">
+                  <Label htmlFor="phone" className="text-sm text-white/90">
                     Phone number
                     <span className="ml-0.5 text-red-400">*</span>
                   </Label>
@@ -217,17 +217,17 @@ export function EventRegisterDialog({
                     type="tel"
                     autoComplete="tel"
                     required
-                    className="bg-white/5 text-white placeholder:text-white/40 border-white/20"
+                    className="h-11 rounded-xl border-0 bg-[#30343a] text-white placeholder:text-[#aeb4bc] focus-visible:ring-0 focus-visible:outline-none focus-visible:border-transparent focus-visible:ring-offset-0"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="altPhone">Alternate phone (optional)</Label>
+                  <Label htmlFor="altPhone" className="text-sm text-white/90">Alternate phone (optional)</Label>
                   <Input
                     id="altPhone"
                     name="altPhone"
                     type="tel"
                     autoComplete="tel"
-                    className="bg-white/5 text-white placeholder:text-white/40 border-white/20"
+                    className="h-11 rounded-xl border-0 bg-[#30343a] text-white placeholder:text-[#aeb4bc] focus-visible:ring-0 focus-visible:outline-none focus-visible:border-transparent focus-visible:ring-offset-0"
                   />
                 </div>
               </div>
@@ -237,11 +237,11 @@ export function EventRegisterDialog({
               <p className="text-xs text-red-400 mt-1">{errorMessage}</p>
             )}
 
-            <DialogFooter className="pt-1 border-t border-white/[0.08] mt-1 -mx-6 px-6 pb-3 pt-2 bg-black/60 rounded-b-3xl">
+            <DialogFooter className="pt-1 border-t border-white/[0.05] mt-1 -mx-6 px-6 pb-4 pt-3 bg-gradient-to-r from-[#0b0b0b] via-[#060606] to-[#0b0b0b] rounded-b-3xl">
               <div className="flex w-full justify-end">
                 <Button
                   type="submit"
-                  className="bg-amber-400 text-black hover:bg-amber-300"
+                  className="h-10 rounded-full bg-amber-400 px-5 text-black font-semibold shadow-[0_10px_30px_rgba(251,191,36,0.3)] transition-all hover:-translate-y-0.5 hover:bg-amber-300"
                 >
                   Pay now
                 </Button>
