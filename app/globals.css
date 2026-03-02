@@ -182,3 +182,17 @@
   animation: float-3 6s ease-in-out infinite;
   animation-delay: 2s;
 }
+
+@media (min-width: 768px) {
+  html.hide-desktop-scrollbar,
+  body.hide-desktop-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  html.hide-desktop-scrollbar::-webkit-scrollbar,
+  body.hide-desktop-scrollbar::-webkit-scrollbar {
+    width: 0;
+    display: none;
+  }
+}

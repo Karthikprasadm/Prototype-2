@@ -69,12 +69,12 @@ export default function ContactPage() {
                   <li>
                     <span className="text-white/50 text-sm block mb-0.5">Email</span>
                     <a 
-                      href="https://mail.google.com/mail/?view=cm&fs=1&to=luminus@rnsit.ac.in" 
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to=helpdesk.luminus@gmail.com"
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-white hover:text-white/90 underline underline-offset-2"
                     >
-                      luminus@rnsit.ac.in
+                      helpdesk.luminus@gmail.com
                     </a>
 
                   </li>

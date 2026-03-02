@@ -125,7 +125,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
     setAnimKey(k => k + 1)
   }
 
-  const hexR = isMobile ? Math.min(vw / 8.5, 48) : 62
+  const hexR = isMobile ? Math.min(vw / 9.8, 40) : 62
   const gapX = hexR * 1.78
   const gapY = hexR * 1.54
   const hexCols = isMobile ? 2 : 4
@@ -152,7 +152,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      padding: isMobile ? "24px 0 36px" : "44px 0 72px",
+      padding: isMobile ? "18px 0 32px" : "44px 0 72px",
       background: "transparent",
     }}>
       <style>{`
@@ -173,7 +173,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
           to   { stroke-dashoffset: 0; }
         }
         .hex-g { cursor: pointer; }
-        .hex-g:hover .hex-bg { fill: rgba(255,255,255,0.1); }
+        .hex-g:not(.is-active):hover .hex-bg { fill: rgba(255,255,255,0.1); }
         .jump-pill:hover { background: rgba(255,255,255,0.12) !important; color: rgba(255,255,255,0.9) !important; }
       `}</style>
 
@@ -196,7 +196,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
           fontWeight: 900,
           letterSpacing: "-0.04em",
           lineHeight: 0.9,
-          fontSize: "clamp(3.2rem, 8vw, 6rem)",
+          fontSize: isMobile ? "clamp(2.1rem, 10vw, 4rem)" : "clamp(3.2rem, 8vw, 6rem)",
           color: "white",
           textShadow: "0 6px 18px rgba(0,0,0,0.5)",
         }}>
@@ -231,13 +231,14 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
           display: "flex",
           justifyContent: isMobile ? "center" : "flex-start",
           width: isMobile ? "100%" : "auto",
-          overflow: "visible",
+          overflowX: isMobile ? "auto" : "visible",
+          overflowY: "visible",
         }}>
           <svg
-            width={svgW + 20}
+            width={isMobile ? "100%" : svgW + 20}
             height={svgH + 20}
             viewBox={`-10 -10 ${svgW + 20} ${svgH + 20}`}
-            style={{ overflow: "visible", display: "block" }}
+            style={{ overflow: "visible", display: "block", minWidth: isMobile ? svgW + 20 : undefined }}
           >
             <defs>
               <filter id="f-none" />
@@ -253,7 +254,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
               return (
                 <g
                   key={cat.id}
-                  className="hex-g"
+                  className={`hex-g ${active ? "is-active" : ""}`}
                   onClick={() => handleSelect(cat.id)}
                   style={{
                     opacity: revealed ? 1 : 0,

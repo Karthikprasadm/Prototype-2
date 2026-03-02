@@ -21,6 +21,17 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
   useEffect(() => {
     const canvas = canvasRef.current!
     const ctx = canvas.getContext("2d")!
+    const isMobile = typeof window !== "undefined" ? window.innerWidth < 768 : false
+    const useCustomCursor = hideCursor && typeof window !== "undefined" && window.matchMedia("(pointer:fine)").matches
+    const hideDesktopScrollbar =
+      typeof window !== "undefined" &&
+      window.innerWidth >= 768 &&
+      window.location.pathname === "/"
+
+    if (hideDesktopScrollbar) {
+      document.documentElement.classList.add("hide-desktop-scrollbar")
+      document.body.classList.add("hide-desktop-scrollbar")
+    }
 
     /** Extra particles that fade in on scroll to fill the background when dispersed */
     type FillParticle = { x: number; y: number; size: number; phase: number; r: number; g: number; b: number }
@@ -29,7 +40,9 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
     function createFillParticles() {
       const w = canvas.width
       const h = canvas.height
-      const count = Math.min(2200, Math.floor((w * h) / (36 * 36)))
+      const count = isMobile
+        ? Math.min(900, Math.floor((w * h) / (52 * 52)))
+        : Math.min(2200, Math.floor((w * h) / (36 * 36)))
       fillParticles = []
       for (let i = 0; i < count; i++) {
         fillParticles.push({
@@ -47,7 +60,8 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
     const resize = () => {
       const w = window.innerWidth
       const h = window.innerHeight
-      const dpr = Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 2)
+      const dprCap = isMobile ? 1.6 : 2
+      const dpr = Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, dprCap)
       canvas.width = w * dpr
       canvas.height = h * dpr
       if (fillParticles.length > 0) createFillParticles()
@@ -56,7 +70,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
     let dpr = resize()
     const handleResize = () => { dpr = resize() }
     window.addEventListener("resize", handleResize)
-    if (hideCursor) {
+    if (useCustomCursor) {
       document.documentElement.style.cursor = "none"
       document.body.style.cursor = "none"
     }
@@ -102,7 +116,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       })
     }
 
-    if (hideCursor) {
+    if (useCustomCursor) {
       window.addEventListener("mousemove", handleMouseMove)
       window.addEventListener("click", handleClick)
     }
@@ -138,7 +152,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
           const offCtx = off.getContext("2d")!
           off.width = canvas.width
           off.height = canvas.height
-          const scaleMultiplier = window.innerWidth < 768 ? 0.8 : 1.15
+          const scaleMultiplier = window.innerWidth < 768 ? 1.16 : 1.15
           const scale = Math.min(off.width / img.width, off.height / img.height) * scaleMultiplier
           const w = img.width * scale
           const h = img.height * scale
@@ -156,7 +170,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       if (!imageData) return
       const data = imageData.data
       particles = []
-      const gap = Math.max(2, particleGap)
+      const gap = isMobile ? Math.max(3, particleGap) : Math.max(2, particleGap)
       for (let y = 0; y < canvas.height; y += gap) {
         for (let x = 0; x < canvas.width; x += gap) {
           const i = (y * canvas.width + x) * 4
@@ -339,25 +353,52 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       // Draw text below the logo, fades as user scrolls
       const textAlpha = Math.max(0, 1 - scrollProgress * 3)
       if (textAlpha > 0) {
+        const isMobile = window.innerWidth < 768
         const centerX = canvas.width / 2
-        const centerY = canvas.height / 2 + canvas.height * 0.28
+        const centerY = canvas.height / 2 + canvas.height * (isMobile ? 0.2 : 0.24)
         ctx.save()
         ctx.globalAlpha = textAlpha
         ctx.textAlign = "center"
-        const isMobile = window.innerWidth < 768
-        const fontSize = Math.round((isMobile ? 5 : 11) * dpr)
-        ctx.fillStyle = "rgba(255, 255, 255, 0.4)"
-        ctx.font = `500 ${fontSize}px "Geist Mono", "JetBrains Mono", "SF Mono", Menlo, monospace`
-        ctx.letterSpacing = `${Math.round(0.2 * fontSize)}px`
-        const lineH = (isMobile ? 10 : 20) * dpr
-        ctx.fillText("LUMINUS 2026 IS RNSIT'S FIRST NATIONAL-LEVEL INTERCOLLEGIATE TECH FEST,", centerX, centerY)
-        ctx.fillText("LAUNCHED IN ITS LANDMARK 25TH YEAR TO BEGIN A LEGACY OF INNOVATION.", centerX, centerY + lineH)
-        ctx.fillText("WITH 2,000+ STUDENTS NATIONWIDE, IT BLENDS TECHNICAL AND INTERDISCIPLINARY", centerX, centerY + lineH * 2)
-        ctx.fillText("CHALLENGES THAT INSPIRE YOU TO COMPETE, GROW, AND SHINE.", centerX, centerY + lineH * 3)
+        const fontSize = Math.round((isMobile ? 14 : 11) * dpr)
+        const lineH = (isMobile ? 18 : 20) * dpr
+        const lines = isMobile
+          ? [
+              "Luminus 2026 marks a new beginning at RNSIT,",
+              "the first national-level intercollegiate",
+              "tech fest launched in its landmark 25th year.",
+              "More than an event, it starts a legacy of",
+              "innovation, ambition, and bold ideas.",
+              "With 2,000+ students nationwide, it brings",
+              "technical and interdisciplinary challenges",
+              "to help you compete, learn, and shine.",
+            ]
+          : [
+              "LUMINUS 2026 IS RNSIT'S FIRST NATIONAL-LEVEL INTERCOLLEGIATE TECH FEST,",
+              "LAUNCHED IN ITS LANDMARK 25TH YEAR TO BEGIN A LEGACY OF INNOVATION.",
+              "WITH 2,000+ STUDENTS NATIONWIDE, IT BLENDS TECHNICAL AND INTERDISCIPLINARY",
+              "CHALLENGES THAT INSPIRE YOU TO COMPETE, GROW, AND SHINE.",
+            ]
+
+        if (isMobile) {
+          const padY = 10 * dpr
+          const blockH = lineH * lines.length + padY * 2
+          ctx.fillStyle = "rgba(0,0,0,0.35)"
+          ctx.fillRect(0, centerY - padY - lineH * 0.9, canvas.width, blockH)
+        }
+
+        ctx.fillStyle = isMobile ? "rgba(255, 255, 255, 0.86)" : "rgba(255, 255, 255, 0.4)"
+        ctx.font = isMobile
+          ? `600 ${fontSize}px "Geist Sans", "Segoe UI", sans-serif`
+          : `500 ${fontSize}px "Geist Mono", "JetBrains Mono", "SF Mono", Menlo, monospace`
+        ctx.letterSpacing = `${Math.round((isMobile ? 0.04 : 0.2) * fontSize)}px`
+
+        lines.forEach((line, idx) => {
+          ctx.fillText(line, centerX, centerY + lineH * idx)
+        })
         ctx.restore()
       }
 
-      if (hideCursor) {
+      if (useCustomCursor) {
         drawShockwaveRings()
         drawCursor()   // always on top
       }
@@ -379,7 +420,11 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       cancelAnimationFrame(rafId)
       document.removeEventListener("visibilitychange", onVisibilityChange)
       window.removeEventListener("resize", handleResize)
-      if (hideCursor) {
+      if (hideDesktopScrollbar) {
+        document.documentElement.classList.remove("hide-desktop-scrollbar")
+        document.body.classList.remove("hide-desktop-scrollbar")
+      }
+      if (useCustomCursor) {
         document.documentElement.style.cursor = ""
         document.body.style.cursor = ""
         window.removeEventListener("mousemove", handleMouseMove)

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 export default function HackathonSection() {
   const [glitch, setGlitch] = useState(false)
   const [entered, setEntered] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setEntered(true), 50)
@@ -17,6 +18,13 @@ export default function HackathonSection() {
       setTimeout(() => setGlitch(false), 180)
     }, 2800)
     return () => clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    const updateViewport = () => setIsMobile(window.innerWidth < 768)
+    updateViewport()
+    window.addEventListener("resize", updateViewport)
+    return () => window.removeEventListener("resize", updateViewport)
   }, [])
 
   return (
@@ -155,7 +163,11 @@ export default function HackathonSection() {
 
       <div
         className={`hack-root ${entered ? 'entered' : ''} ${glitch ? 'glitch-active' : ''}`}
-        style={{ minHeight: '100vh', width: '100%' }}
+        style={{
+          minHeight: isMobile ? 'auto' : '100vh',
+          width: '100%',
+          padding: isMobile ? '72px 20px 32px' : '5vw 6vw',
+        }}
       >
         <div className="hack-inner">
 
@@ -172,7 +184,7 @@ export default function HackathonSection() {
           />
 
           {/* Top label row */}
-          <div className="anim-1" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+          <div className="anim-1" style={{ display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', marginBottom: isMobile ? '1.2rem' : '2rem', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '0.6rem' : 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <div
                 className="flicker-label"
@@ -192,7 +204,7 @@ export default function HackathonSection() {
             <h2
               className="glitch-title"
               data-text="GRAND"
-              style={{ fontSize: 'clamp(50px, 10vw, 100px)', fontWeight: 900, lineHeight: 0.92, color: '#fff' }}
+              style={{ fontSize: isMobile ? 'clamp(42px, 14vw, 72px)' : 'clamp(50px, 10vw, 100px)', fontWeight: 900, lineHeight: 0.92, color: '#fff' }}
             >
               GRAND
             </h2>
@@ -202,7 +214,7 @@ export default function HackathonSection() {
               className="glitch-title"
               data-text="HACKATHON"
               style={{
-                fontSize: 'clamp(50px, 10vw, 100px)', fontWeight: 900, lineHeight: 0.92,
+                fontSize: isMobile ? 'clamp(42px, 14vw, 72px)' : 'clamp(50px, 10vw, 100px)', fontWeight: 900, lineHeight: 0.92,
                 WebkitTextStroke: '1.5px rgba(255,255,255,0.55)', color: 'transparent',
               }}
             >
@@ -224,8 +236,8 @@ export default function HackathonSection() {
             className="anim-4"
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr 1fr 2fr auto',
-              gap: '10px',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr 2fr auto',
+              gap: isMobile ? '12px' : '10px',
               width: '100%',
               marginBottom: '1rem',
             }}
@@ -238,7 +250,7 @@ export default function HackathonSection() {
                 background: 'rgba(9,12,24,0.72)',
                 border: '1px solid rgba(255,255,255,0.14)',
                 borderRadius: 14,
-                padding: '1.35rem 1.15rem',
+                padding: isMobile ? '1rem 0.9rem' : '1.35rem 1.15rem',
                 backdropFilter: 'blur(4px)',
               }}
             >
@@ -254,7 +266,7 @@ export default function HackathonSection() {
                 background: 'rgba(9,12,24,0.72)',
                 border: '1px solid rgba(255,255,255,0.14)',
                 borderRadius: 14,
-                padding: '1.35rem 1.15rem',
+                padding: isMobile ? '1rem 0.9rem' : '1.35rem 1.15rem',
                 backdropFilter: 'blur(4px)',
               }}
             >
@@ -270,7 +282,7 @@ export default function HackathonSection() {
                 background: 'rgba(9,12,24,0.72)',
                 border: '1px solid rgba(255,255,255,0.14)',
                 borderRadius: 14,
-                padding: '1.35rem 1.15rem',
+                padding: isMobile ? '1rem 0.9rem' : '1.35rem 1.15rem',
                 backdropFilter: 'blur(4px)',
               }}
             >
@@ -283,7 +295,7 @@ export default function HackathonSection() {
             <div
               style={{
                 position: 'relative',
-                padding: '1.35rem 1.15rem',
+                padding: isMobile ? '1rem 0.9rem' : '1.35rem 1.15rem',
                 background: 'linear-gradient(135deg, rgba(168,85,247,0.22) 0%, rgba(10,13,28,0.82) 80%)',
                 border: '1px solid rgba(168,85,247,0.45)',
                 borderRadius: 14,
@@ -300,18 +312,18 @@ export default function HackathonSection() {
             </div>
 
             {/* CTAs */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: 'transparent' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '10px', background: 'transparent' }}>
               <a
                 href="/register"
                 className="register-btn btn-primary"
                 style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  gap: '0.5rem', padding: '0 2rem', minHeight: '64px',
+                  gap: '0.5rem', padding: isMobile ? '0 1rem' : '0 2rem', minHeight: isMobile ? '52px' : '64px',
                   borderRadius: 14,
                   background: 'linear-gradient(180deg, #ffffff 0%, #ececec 100%)', color: '#000',
                   fontFamily: "'Space Mono', monospace", fontSize: '11px', fontWeight: 700,
                   textTransform: 'uppercase', letterSpacing: '0.15em',
-                  textDecoration: 'none', transition: 'background 0.2s', whiteSpace: 'nowrap',
+                  textDecoration: 'none', transition: 'background 0.2s', whiteSpace: isMobile ? 'normal' : 'nowrap',
                 }}
                 onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#c084fc')}
                 onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = 'linear-gradient(180deg, #ffffff 0%, #ececec 100%)')}
@@ -323,13 +335,13 @@ export default function HackathonSection() {
                 href="/events"
                 style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: '0 2rem', minHeight: '64px',
+                  padding: isMobile ? '0 1rem' : '0 2rem', minHeight: isMobile ? '52px' : '64px',
                   borderRadius: 14,
                   border: '1px solid rgba(255,255,255,0.16)',
                   background: 'rgba(13,17,30,0.72)', color: 'rgba(255,255,255,0.9)',
                   fontFamily: "'Space Mono', monospace", fontSize: '11px',
                   textTransform: 'uppercase', letterSpacing: '0.15em',
-                  textDecoration: 'none', transition: 'color 0.2s, background 0.2s', whiteSpace: 'nowrap',
+                  textDecoration: 'none', transition: 'color 0.2s, background 0.2s', whiteSpace: isMobile ? 'normal' : 'nowrap',
                 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#fff'; (e.currentTarget as HTMLElement).style.background = 'rgba(24,31,52,0.8)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.9)'; (e.currentTarget as HTMLElement).style.background = 'rgba(13,17,30,0.72)'; }}
@@ -340,7 +352,7 @@ export default function HackathonSection() {
           </div>
 
           {/* Bottom system readout */}
-          <div className="anim-5" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div className="anim-5" style={{ display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '0.45rem' : 0 }}>
             <span className="tag-mono" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.48)', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
               SYS::RNSIT.EDU
             </span>
