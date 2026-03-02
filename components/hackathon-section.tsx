@@ -123,14 +123,6 @@ export default function HackathonSection() {
 
         .stat-card {
           position: relative;
-          overflow: hidden;
-        }
-        .stat-card::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
-          pointer-events: none;
         }
 
         .prize-number {
@@ -146,9 +138,9 @@ export default function HackathonSection() {
           content: '';
           position: absolute;
           inset: 0;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
           transform: translateX(-100%);
-          transition: transform 0.5s ease;
+          transition: transform 0.6s ease;
         }
         .btn-primary:hover::after { transform: translateX(100%); }
 
@@ -224,7 +216,7 @@ export default function HackathonSection() {
 
           {/* Tagline */}
           <div className="anim-3" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-            <span className="tag-mono" style={{ fontSize: '0.875rem', color: '#c084fc', fontStyle: 'italic', textShadow: '0 0 12px rgba(168,85,247,0.35)' }}>build. break. become.</span>
+            <span className="tag-mono" style={{ fontSize: '0.875rem', color: '#c084fc', fontStyle: 'italic', textShadow: '0 0 12px rgba(168,85,247,0.35)' }}>Build Beyond Code. Engineer What's Next</span>
             <span className="cursor-blink tag-mono" style={{ color: 'rgba(255,255,255,0.4)' }}>_</span>
           </div>
 
@@ -237,7 +229,7 @@ export default function HackathonSection() {
             style={{
               display: 'grid',
               gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr 2fr auto',
-              gap: isMobile ? '12px' : '10px',
+              gap: isMobile ? '8px' : '8px',
               width: '100%',
               marginBottom: '1rem',
             }}
@@ -247,104 +239,104 @@ export default function HackathonSection() {
             <div
               className="stat-card"
               style={{
-                background: 'rgba(9,12,24,0.72)',
-                border: '1px solid rgba(255,255,255,0.14)',
-                borderRadius: 14,
-                padding: isMobile ? '1rem 0.9rem' : '1.35rem 1.15rem',
-                backdropFilter: 'blur(4px)',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.07)',
+                borderTop: '1.5px solid rgba(255,255,255,0.2)',
+                borderRadius: 16,
+                padding: isMobile ? '1rem 1rem' : '1.4rem 1.2rem',
+                backdropFilter: 'blur(12px)',
               }}
             >
-              <p className="tag-mono" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.62)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.6rem' }}>Team Size</p>
-              <p className="prize-number" style={{ fontSize: '2.5rem', color: '#fff', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>2-4</p>
-              <p className="tag-mono" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.72)' }}>members</p>
+              <p className="tag-mono" style={{ fontSize: '8px', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '0.7rem' }}>Team Size</p>
+              <p className="prize-number" style={{ fontSize: '2.6rem', color: '#fff', lineHeight: 1, marginBottom: '0.3rem' }}>2-4</p>
+              <p className="tag-mono" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>members</p>
             </div>
 
             {/* Stat: Duration */}
             <div
               className="stat-card"
               style={{
-                background: 'rgba(9,12,24,0.72)',
-                border: '1px solid rgba(255,255,255,0.14)',
-                borderRadius: 14,
-                padding: isMobile ? '1rem 0.9rem' : '1.35rem 1.15rem',
-                backdropFilter: 'blur(4px)',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.07)',
+                borderTop: '1.5px solid rgba(255,255,255,0.2)',
+                borderRadius: 16,
+                padding: isMobile ? '1rem 1rem' : '1.4rem 1.2rem',
+                backdropFilter: 'blur(12px)',
               }}
             >
-              <p className="tag-mono" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.62)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.6rem' }}>Duration</p>
-              <p className="prize-number" style={{ fontSize: '2.5rem', color: '#fff', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>24</p>
-              <p className="tag-mono" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.72)' }}>hours</p>
+              <p className="tag-mono" style={{ fontSize: '8px', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '0.7rem' }}>Duration</p>
+              <p className="prize-number" style={{ fontSize: '2.6rem', color: '#fff', lineHeight: 1, marginBottom: '0.3rem' }}>24</p>
+              <p className="tag-mono" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>hours</p>
             </div>
 
             {/* Stat: Mode */}
             <div
               className="stat-card"
               style={{
-                background: 'rgba(9,12,24,0.72)',
-                border: '1px solid rgba(255,255,255,0.14)',
-                borderRadius: 14,
-                padding: isMobile ? '1rem 0.9rem' : '1.35rem 1.15rem',
-                backdropFilter: 'blur(4px)',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.07)',
+                borderTop: '1.5px solid rgba(255,255,255,0.2)',
+                borderRadius: 16,
+                padding: isMobile ? '1rem 1rem' : '1.4rem 1.2rem',
+                backdropFilter: 'blur(12px)',
               }}
             >
-              <p className="tag-mono" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.62)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.6rem' }}>Mode</p>
-              <p className="prize-number" style={{ fontSize: '2.5rem', color: '#fff', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>LIVE</p>
-              <p className="tag-mono" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.72)' }}>in-person</p>
+              <p className="tag-mono" style={{ fontSize: '8px', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '0.7rem' }}>Mode</p>
+              <p className="prize-number" style={{ fontSize: '2.6rem', color: '#fff', lineHeight: 1, marginBottom: '0.3rem' }}>LIVE</p>
+              <p className="tag-mono" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>in-person</p>
             </div>
 
             {/* Prize pool */}
             <div
               style={{
-                position: 'relative',
-                padding: isMobile ? '1rem 0.9rem' : '1.35rem 1.15rem',
-                background: 'linear-gradient(135deg, rgba(168,85,247,0.22) 0%, rgba(10,13,28,0.82) 80%)',
-                border: '1px solid rgba(168,85,247,0.45)',
-                borderRadius: 14,
-                overflow: 'hidden',
-                backdropFilter: 'blur(4px)',
+                background: 'rgba(168,85,247,0.06)',
+                border: '1px solid rgba(168,85,247,0.15)',
+                borderTop: '1.5px solid rgba(168,85,247,0.5)',
+                borderRadius: 16,
+                padding: isMobile ? '1rem 1rem' : '1.4rem 1.4rem',
+                backdropFilter: 'blur(12px)',
               }}
             >
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '48px', height: '1px', background: 'rgba(168,85,247,0.6)' }} />
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '1px', height: '48px', background: 'rgba(168,85,247,0.6)' }} />
-              <p className="tag-mono" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.68)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '0.5rem' }}>Total Prize Pool</p>
-              <p className="prize-number" style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', color: '#a855f7', textShadow: '0 0 30px rgba(168,85,247,0.25)', lineHeight: 1 }}>
+              <p className="tag-mono" style={{ fontSize: '8px', color: 'rgba(168,85,247,0.7)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '0.7rem' }}>Total Prize Pool</p>
+              <p className="prize-number" style={{ fontSize: 'clamp(2rem, 3.8vw, 3rem)', color: '#c084fc', lineHeight: 1 }}>
                 ₹1,20,000
               </p>
             </div>
 
             {/* CTAs */}
-            <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '10px', background: 'transparent' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '8px' }}>
               <a
                 href="/events/grand-hackathon"
                 className="register-btn btn-primary"
                 style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  gap: '0.5rem', padding: isMobile ? '0 1rem' : '0 2rem', minHeight: isMobile ? '52px' : '64px',
-                  borderRadius: 14,
-                  background: 'linear-gradient(180deg, #ffffff 0%, #ececec 100%)', color: '#000',
-                  fontFamily: "'Space Mono', monospace", fontSize: '11px', fontWeight: 700,
-                  textTransform: 'uppercase', letterSpacing: '0.15em',
-                  textDecoration: 'none', transition: 'background 0.2s', whiteSpace: isMobile ? 'normal' : 'nowrap',
+                  gap: '0.5rem', padding: isMobile ? '0 1.2rem' : '0 1.8rem', minHeight: isMobile ? '52px' : '64px',
+                  borderRadius: 16,
+                  background: '#fff', color: '#000',
+                  fontFamily: "'Space Mono', monospace", fontSize: '10px', fontWeight: 700,
+                  textTransform: 'uppercase', letterSpacing: '0.18em',
+                  textDecoration: 'none', transition: 'background 0.25s, color 0.25s', whiteSpace: isMobile ? 'normal' : 'nowrap',
                 }}
-                onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#c084fc')}
-                onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = 'linear-gradient(180deg, #ffffff 0%, #ececec 100%)')}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#c084fc'; (e.currentTarget as HTMLElement).style.color = '#fff'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#fff'; (e.currentTarget as HTMLElement).style.color = '#000'; }}
               >
-                <span>Register Now</span>
+                <span>Register</span>
                 <span className="arrow-icon" style={{ display: 'inline-block', transition: 'transform 0.2s' }}>→</span>
               </a>
               <a
                 href="/events/grand-hackathon"
                 style={{
                   flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: isMobile ? '0 1rem' : '0 2rem', minHeight: isMobile ? '52px' : '64px',
-                  borderRadius: 14,
-                  border: '1px solid rgba(255,255,255,0.16)',
-                  background: 'rgba(13,17,30,0.72)', color: 'rgba(255,255,255,0.9)',
-                  fontFamily: "'Space Mono', monospace", fontSize: '11px',
-                  textTransform: 'uppercase', letterSpacing: '0.15em',
-                  textDecoration: 'none', transition: 'color 0.2s, background 0.2s', whiteSpace: isMobile ? 'normal' : 'nowrap',
+                  padding: isMobile ? '0 1.2rem' : '0 1.8rem', minHeight: isMobile ? '52px' : '64px',
+                  borderRadius: 16,
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'transparent', color: 'rgba(255,255,255,0.55)',
+                  fontFamily: "'Space Mono', monospace", fontSize: '10px',
+                  textTransform: 'uppercase', letterSpacing: '0.18em',
+                  textDecoration: 'none', transition: 'color 0.25s, border-color 0.25s', whiteSpace: isMobile ? 'normal' : 'nowrap',
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#fff'; (e.currentTarget as HTMLElement).style.background = 'rgba(24,31,52,0.8)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.9)'; (e.currentTarget as HTMLElement).style.background = 'rgba(13,17,30,0.72)'; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.9)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.25)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.55)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)'; }}
               >
                 Details
               </a>

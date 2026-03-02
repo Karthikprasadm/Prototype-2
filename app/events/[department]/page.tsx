@@ -7,6 +7,7 @@ import LuminusParticles from "../../Home page/vercel-logo-particles"
 import { EventCardRules } from "./event-card-rules"
 import { EventRegisterDialog } from "./event-register-dialog"
 import { ContactList } from "./contact-list"
+import { EventHighlighter } from "./event-highlighter"
 
 interface PageProps {
   params: Promise<{ department: string }>
@@ -23,6 +24,7 @@ export default async function DepartmentEventsPage({ params }: PageProps) {
 
   return (
     <main className="relative min-h-screen">
+      <EventHighlighter />
       <LuminusParticles startDispersed hideCursor={false} particleGap={4} />
       <div className="relative z-10 pt-24 px-6 pb-24">
         <div className="max-w-3xl mx-auto text-white/90">
@@ -44,6 +46,7 @@ export default async function DepartmentEventsPage({ params }: PageProps) {
             return (
               <Card
                 key={ev.name}
+                id={`event-${eventIndex}`}
                 className="rounded-2xl border-white/10 bg-white/5 backdrop-blur-md shadow-lg shadow-black/20 overflow-hidden"
               >
                 <CardHeader className="pb-3 px-6 pt-6">

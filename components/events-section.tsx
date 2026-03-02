@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
 import {
   Trophy,
@@ -412,8 +413,9 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
             style={{ display: "flex", flexDirection: "column" }}
           >
             {selectedCat.events.map((ev, i) => (
-              <div
+              <Link
                 key={i}
+                href={`/events/${selectedCat.id}#event-${i}`}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -421,7 +423,11 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
                   padding: isMobile ? "10px 0" : "12px 0",
                   borderBottom: "1px solid rgba(255,255,255,0.14)",
                   animation: `item-in 0.3s ease ${i * 0.05}s both`,
+                  textDecoration: "none",
+                  cursor: "pointer",
                 }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)" }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent" }}
               >
                 {/* Number */}
                 <span style={{
@@ -470,7 +476,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
                     transition: "background 0.3s",
                   }} />
                 )}
-              </div>
+              </Link>
             ))}
           </div>
 
