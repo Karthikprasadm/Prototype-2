@@ -130,7 +130,7 @@ export function RandomObjects() {
     if (objects.length === 0 || !visible) return null;
 
     return (
-        <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden" aria-hidden>
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden>
             <Canvas camera={{ position: [0, 0, 15], fov: 45 }} frameloop="always" dpr={[1, 2]}>
                 <ambientLight intensity={0} />
                 <directionalLight position={[0, 10, 0]} intensity={1} />

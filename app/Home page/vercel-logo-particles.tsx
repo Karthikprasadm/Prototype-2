@@ -333,7 +333,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       style={{
         position: "fixed", top: 0, left: 0,
         width: "100vw", height: "100vh",
-        zIndex: 50,
+        zIndex: 10,
         pointerEvents: "none",
         cursor: hideCursor ? "none" : "default",
       }}

@@ -20,6 +20,6 @@ export default function EventsSectionWrapper() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Show events section after hackathon (around 75% scroll)
+  // Events section is always visible - scrolls naturally with page
   return <EventsSection scrollProgress={scrollProgress} />
 }

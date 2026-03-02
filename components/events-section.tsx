@@ -1,256 +1,577 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { Trophy, Cpu, Shield, Database, Code, Wrench, Lightbulb, Gamepad2, Zap, Lock, Brain, Binary, Terminal, Gauge, Cog, Sparkles } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Trophy, Gamepad2, Lock, Database, Terminal, Cog, Sparkles, Brain } from "lucide-react"
 
 interface EventsSectionProps {
   scrollProgress: number
 }
 
+const CATEGORIES = [
+  {
+    id: "hackathon", title: "Grand Hackathon", short: "HACKATHON", index: "01",
+    icon: Trophy, color: "#f59e0b",
+    events: [{ name: "Grand Hackathon", flagship: true }],
+  },
+  {
+    id: "gaming", title: "Gaming & Combat", short: "GAMING", index: "02",
+    icon: Gamepad2, color: "#ef4444",
+    events: [
+      { name: "Robowars", flagship: true },
+      { name: "RC Car Racing", flagship: false },
+      { name: "Valorant", flagship: false },
+      { name: "BGMI", flagship: false },
+    ],
+  },
+  {
+    id: "ai", title: "Artificial Intelligence", short: "AI", index: "03",
+    icon: Brain, color: "#a78bfa",
+    events: [
+      { name: "The Turing Test", flagship: false },
+      { name: "Reverse Prompt Engineering", flagship: false },
+    ],
+  },
+  {
+    id: "cyber", title: "Cybersecurity", short: "CYBER", index: "04",
+    icon: Lock, color: "#4ade80",
+    events: [
+      { name: "Zero Day Arena", flagship: true },
+      { name: "Escape & Exploit", flagship: false },
+    ],
+  },
+  {
+    id: "data", title: "Data Science", short: "DATA", index: "05",
+    icon: Database, color: "#60a5fa",
+    events: [
+      { name: "Data Royale", flagship: true },
+      { name: "Data Decoded", flagship: false },
+      { name: "SDG Data Jam", flagship: false },
+      { name: "Kill Switch", flagship: false },
+    ],
+  },
+  {
+    id: "coding", title: "Coding & Logic", short: "CODING", index: "06",
+    icon: Terminal, color: "#fb923c",
+    events: [
+      { name: "Code Conundrum", flagship: false },
+      { name: "Version Control Wars", flagship: false },
+      { name: "Tech Escape Quest", flagship: false },
+      { name: "Bug Buster", flagship: false },
+    ],
+  },
+  {
+    id: "core", title: "Core Engineering", short: "CORE", index: "07",
+    icon: Cog, color: "#fbbf24",
+    events: [
+      { name: "Design. Decide. Dominate.", flagship: true },
+      { name: "Electraforge", flagship: true },
+      { name: "IoT Nexus", flagship: true },
+      { name: "Innovatrium", flagship: true },
+      { name: "Circuitrix", flagship: false },
+      { name: "Bridge IT", flagship: false },
+      { name: "Embedded Escape Room", flagship: false },
+    ],
+  },
+  {
+    id: "quiz", title: "Quiz & Ideas", short: "IDEAS", index: "08",
+    icon: Sparkles, color: "#f472b6",
+    events: [
+      { name: "Ideathon Arena", flagship: false },
+      { name: "Biznova", flagship: true },
+    ],
+  },
+]
+
+// Pointy-top hexagon path
+function hexPath(cx: number, cy: number, r: number) {
+  const pts = Array.from({ length: 6 }, (_, i) => {
+    const a = (Math.PI / 3) * i - Math.PI / 6
+    return `${(cx + r * Math.cos(a)).toFixed(2)},${(cy + r * Math.sin(a)).toFixed(2)}`
+  })
+  return `M${pts.join("L")}Z`
+}
+
+const GRID_POS = [
+  { col: 0, row: 0 }, { col: 1, row: 0 }, { col: 2, row: 0 },
+  { col: 0, row: 1 }, { col: 1, row: 1 }, { col: 2, row: 1 },
+  { col: 0, row: 2 }, { col: 1, row: 2 },
+]
+
+function useWindowWidth() {
+  const [w, setW] = useState(1200)
+  useEffect(() => {
+    const fn = () => setW(window.innerWidth)
+    fn()
+    window.addEventListener("resize", fn)
+    return () => window.removeEventListener("resize", fn)
+  }, [])
+  return w
+}
+
 export default function EventsSection({ scrollProgress }: EventsSectionProps) {
-  // scrollProgress: 0.75 = section starts, 0.95 = section ends (adjust to match your scroll setup)
-  const SECTION_START = 0.75
-  const SECTION_END = 0.98
+  const [selected, setSelected] = useState(CATEGORIES[0].id)
+  const [prevSelected, setPrevSelected] = useState(CATEGORIES[0].id)
+  const [animKey, setAnimKey] = useState(0)
+  const vw = useWindowWidth()
+  const isMobile = vw < 768
 
-  const sectionProgress = Math.max(0, Math.min(1, (scrollProgress - SECTION_START) / (SECTION_END - SECTION_START)))
+  const sp = Math.max(0, Math.min(1, (scrollProgress - 0.1) / 0.85))
 
-  // Smooth opacity calculation - more gradual fade in
-  const fadeOpacity = Math.min(1, sectionProgress * 2.5)
-  
-  if (fadeOpacity === 0) return null
+  const handleSelect = (id: string) => {
+    if (id === selected) return
+    setPrevSelected(selected)
+    setSelected(id)
+    setAnimKey(k => k + 1)
+  }
 
-  const eventCategories = [
-    {
-      id: "gaming",
-      title: "Gaming & Combat",
-      icon: Gamepad2,
-      color: "#ef4444",
-      events: [
-        { name: "Robowars", flagship: true },
-        { name: "RC Car Racing", flagship: false },
-        { name: "Valorant", flagship: false },
-        { name: "BGMI", flagship: false },
-      ]
-    },
-    {
-      id: "ai",
-      title: "AI & ML",
-      icon: Brain,
-      color: "#8b5cf6",
-      events: [
-        { name: "The Turing Test", flagship: false },
-        { name: "Reverse Prompt Engineering", flagship: false },
-      ]
-    },
-    {
-      id: "cybersecurity",
-      title: "Cybersecurity",
-      icon: Lock,
-      color: "#22c55e",
-      events: [
-        { name: "Zero Day Arena", flagship: true },
-        { name: "Escape & Exploit", flagship: false },
-      ]
-    },
-    {
-      id: "datascience",
-      title: "Data Science",
-      icon: Database,
-      color: "#3b82f6",
-      events: [
-        { name: "Data Royale", flagship: true },
-        { name: "Data Decoded", flagship: false },
-        { name: "SDG Data Jam", flagship: false },
-        { name: "Kill Switch", flagship: false },
-      ]
-    },
-    {
-      id: "coding",
-      title: "Coding & Logic",
-      icon: Terminal,
-      color: "#f97316",
-      events: [
-        { name: "Code Condrum", flagship: false },
-        { name: "Version Control Wars", flagship: false },
-        { name: "Tech Escape Quest", flagship: false },
-        { name: "Bug Buster", flagship: false },
-      ]
-    },
-    {
-      id: "core",
-      title: "Core Engineering",
-      icon: Cog,
-      color: "#eab308",
-      events: [
-        { name: "DESIGN. DECIDE. DOMINATE.", flagship: true },
-        { name: "Electraforge", flagship: true },
-        { name: "IoT Nexus", flagship: true },
-        { name: "Innovatrium", flagship: true },
-        { name: "Circuitrix", flagship: false },
-        { name: "Bridge IT", flagship: false },
-        { name: "Embedded Escape Room", flagship: false },
-      ]
-    },
-    {
-      id: "quiz",
-      title: "Quiz & Ideas",
-      icon: Sparkles,
-      color: "#ec4899",
-      events: [
-        { name: "Ideathon Arena", flagship: false },
-        { name: "Biznova", flagship: true },
-      ]
-    },
-  ]
+  const hexR = isMobile ? Math.min(vw / 8.5, 48) : 62
+  const gapX = hexR * 1.78
+  const gapY = hexR * 1.54
 
-  const N = eventCategories.length
-  // Each card gets a window of sectionProgress to reveal
-  // Card i reveals when sectionProgress passes i/(N+1)
-  // Fully visible at (i+1)/(N+1)
-  const CARD_WINDOW = 1 / (N + 1)
+  const centers = GRID_POS.map(({ col, row }) => ({
+    x: col * gapX + hexR + (row % 2 === 1 ? gapX * 0.5 : 0),
+    y: row * gapY + hexR,
+  }))
+
+  const svgW = gapX * 2 + hexR * 2
+  const svgH = gapY * 2 + hexR * 2
+
+  const selectedCat = CATEGORIES.find(c => c.id === selected)!
 
   return (
-    <div
-      className="fixed inset-0 z-20 overflow-y-auto"
-      style={{ 
-        opacity: fadeOpacity, 
-        background: '#0a0a0a',
-        transition: 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-      }}
-    >
-      <div className="min-h-full flex flex-col items-center py-20 px-4">
+    <div style={{
+      width: "100%",
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      padding: isMobile ? "52px 0 52px" : "80px 0 80px",
+      background: "transparent",
+    }}>
+      <style>{`
+        @keyframes panel-in {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes item-in {
+          from { opacity: 0; transform: translateX(-8px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes hex-in {
+          from { opacity: 0; transform: scale(0.6); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+        @keyframes tick-in {
+          from { stroke-dashoffset: 200; }
+          to   { stroke-dashoffset: 0; }
+        }
+        .hex-g { cursor: pointer; }
+        .hex-g:hover .hex-bg { fill: rgba(255,255,255,0.04); }
+        .jump-pill:hover { background: rgba(255,255,255,0.06) !important; color: rgba(255,255,255,0.7) !important; }
+      `}</style>
 
-        {/* Timeline spine — grows as you scroll */}
-        <div
-          className="absolute left-1/2 top-32 w-0.5"
-          style={{
-            background: 'linear-gradient(to bottom, #9333ea, #22d3ee, #9333ea)',
-            height: `calc(${sectionProgress * 100}% - 8rem)`,
-            transition: 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            opacity: 0.5,
-          }}
-        />
-
-        {/* Title */}
-        <h2
-          className="text-4xl md:text-6xl font-black text-white mb-16 text-center relative z-10"
-          style={{
-            transform: `translateY(${(1 - Math.min(1, sectionProgress * 8)) * 30}px)`,
-            opacity: Math.min(1, sectionProgress * 8),
-            transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        >
-          EVENT <span style={{ color: '#9333ea' }}>CATEGORIES</span>
+      {/* ── TITLE ── */}
+      <div style={{
+        width: "100%",
+        maxWidth: 1060,
+        padding: isMobile ? "0 20px 36px" : "0 32px 52px",
+        display: "flex",
+        alignItems: isMobile ? "flex-start" : "flex-end",
+        justifyContent: "space-between",
+        flexDirection: isMobile ? "column" : "row",
+        gap: 16,
+        borderBottom: "1px solid rgba(255,255,255,0.08)",
+        marginBottom: isMobile ? 32 : 48,
+      }}>
+        <h2 style={{
+          margin: 0,
+          fontFamily: "'Palatino Linotype', 'Book Antiqua', Georgia, serif",
+          fontWeight: 900,
+          letterSpacing: "-0.04em",
+          lineHeight: 0.9,
+          fontSize: "clamp(3.2rem, 8vw, 6rem)",
+          color: "white",
+        }}>
+          EVENT<br />
+          <span style={{ color: "rgba(255,255,255,0.18)", WebkitTextStroke: "1px rgba(255,255,255,0.3)" }}>
+            GRID
+          </span>
         </h2>
 
-        {/* Timeline Events */}
-        <div className="relative w-full max-w-4xl">
-          {eventCategories.map((category, catIndex) => {
-            const Icon = category.icon
-            const isLeft = catIndex % 2 === 0
+        <div style={{ textAlign: isMobile ? "left" : "right", flexShrink: 0 }}>
+          <p style={{ margin: 0, color: "rgba(255,255,255,0.22)", fontSize: 11, fontFamily: "monospace", letterSpacing: "0.2em", lineHeight: 2 }}>
+            8 CATEGORIES<br />28+ EVENTS
+          </p>
+        </div>
+      </div>
 
-            // This card starts revealing at threshold, fully in at threshold + CARD_WINDOW
-            const threshold = (catIndex + 0.5) / (N + 1)
-            const cardProgress = Math.max(0, Math.min(1, (sectionProgress - threshold) / CARD_WINDOW))
+      {/* ── BODY ── */}
+      <div style={{
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+        gap: isMobile ? 36 : 56,
+        alignItems: "flex-start",
+        width: "100%",
+        maxWidth: 1060,
+        padding: isMobile ? "0 20px" : "0 32px",
+      }}>
 
-            if (cardProgress === 0) return null
+        {/* ── HEX GRID ── */}
+        <div style={{
+          flexShrink: 0,
+          display: "flex",
+          justifyContent: isMobile ? "center" : "flex-start",
+          width: isMobile ? "100%" : "auto",
+          overflow: "visible",
+        }}>
+          <svg
+            width={svgW + 20}
+            height={svgH + 20}
+            viewBox={`-10 -10 ${svgW + 20} ${svgH + 20}`}
+            style={{ overflow: "visible", display: "block" }}
+          >
+            <defs>
+              <filter id="f-none" />
+            </defs>
 
-            const slideOffset = (1 - cardProgress) * 60
+            {CATEGORIES.map((cat, i) => {
+              const { x, y } = centers[i]
+              const active = selected === cat.id
+              const revealed = sp > i / (CATEGORIES.length + 2)
+              const Icon = cat.icon
+              const iconSz = isMobile ? 13 : 16
 
-            return (
-              <div
-                key={category.id}
-                className={`flex items-center mb-16 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}
-                style={{
-                  transform: `translateX(${isLeft ? -slideOffset : slideOffset}px)`,
-                  opacity: cardProgress,
-                  transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-out',
-                }}
-              >
-                {/* Content — left side */}
-                {isLeft && (
-                  <div className="flex-1 pr-8 text-right">
-                    <div
-                      className="inline-block p-6 rounded-2xl"
-                      style={{ background: '#111111', border: `1px solid ${category.color}40` }}
-                    >
-                      <div className="flex items-center gap-3 mb-4 justify-end">
-                        <h3 className="text-lg font-bold text-white">{category.title}</h3>
-                        <div
-                          className="w-8 h-8 rounded-lg flex items-center justify-center"
-                          style={{ background: `${category.color}20` }}
-                        >
-                          <Icon className="w-4 h-4" style={{ color: category.color }} />
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        {category.events.map((event, eventIndex) => (
-                          <div key={eventIndex} className="flex items-center justify-end gap-2">
-                            <span className="text-white/80 text-sm">{event.name}</span>
-                            {event.flagship && (
-                              <span style={{ color: category.color }} className="text-[10px] font-bold">★</span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+              return (
+                <g
+                  key={cat.id}
+                  className="hex-g"
+                  onClick={() => handleSelect(cat.id)}
+                  style={{
+                    opacity: revealed ? 1 : 0,
+                    animation: revealed
+                      ? `hex-in 0.45s cubic-bezier(0.34,1.2,0.64,1) ${i * 0.06}s both`
+                      : "none",
+                  }}
+                >
+                  {/* Active: filled solid hex in category color */}
+                  {/* Inactive: just a thin stroke hex */}
 
-                {/* Timeline dot */}
-                <div className="relative z-10 flex-shrink-0">
-                  <div
-                    className="w-4 h-4 rounded-full"
-                    style={{
-                      background: category.color,
-                      boxShadow: `0 0 ${10 * cardProgress}px ${category.color}`,
-                      transform: `scale(${cardProgress})`,
-                    }}
+                  {/* Hex fill */}
+                  <path
+                    className="hex-bg"
+                    d={hexPath(x, y, hexR - 2)}
+                    fill={active ? cat.color : "transparent"}
+                    stroke={active ? cat.color : "rgba(255,255,255,0.12)"}
+                    strokeWidth={active ? 0 : 1}
+                    style={{ transition: "fill 0.25s ease, stroke 0.25s ease" }}
                   />
-                </div>
 
-                {/* Content — right side */}
-                {!isLeft && (
-                  <div className="flex-1 pl-8 text-left">
-                    <div
-                      className="inline-block p-6 rounded-2xl"
-                      style={{ background: '#111111', border: `1px solid ${category.color}40` }}
+                  {/* Active index watermark */}
+                  {active && (
+                    <text
+                      x={x - hexR * 0.55} y={y - hexR * 0.3}
+                      fill="rgba(0,0,0,0.12)"
+                      fontSize={hexR * 0.7}
+                      fontFamily="monospace"
+                      fontWeight={900}
+                      style={{ pointerEvents: "none", userSelect: "none" }}
                     >
-                      <div className="flex items-center gap-3 mb-4">
-                        <div
-                          className="w-8 h-8 rounded-lg flex items-center justify-center"
-                          style={{ background: `${category.color}20` }}
-                        >
-                          <Icon className="w-4 h-4" style={{ color: category.color }} />
-                        </div>
-                        <h3 className="text-lg font-bold text-white">{category.title}</h3>
-                      </div>
-                      <div className="space-y-1">
-                        {category.events.map((event, eventIndex) => (
-                          <div key={eventIndex} className="flex items-center gap-2">
-                            {event.flagship && (
-                              <span style={{ color: category.color }} className="text-[10px] font-bold">★</span>
-                            )}
-                            <span className="text-white/80 text-sm">{event.name}</span>
-                          </div>
-                        ))}
-                      </div>
+                      {cat.index}
+                    </text>
+                  )}
+
+                  {/* Icon */}
+                  <foreignObject
+                    x={x - iconSz / 2}
+                    y={y - (isMobile ? 10 : 14) - iconSz / 2}
+                    width={iconSz}
+                    height={iconSz}
+                    style={{ pointerEvents: "none", overflow: "visible" }}
+                  >
+                    <div style={{
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      width: "100%", height: "100%",
+                    }}>
+                      <Icon style={{
+                        width: iconSz,
+                        height: iconSz,
+                        color: active ? "rgba(0,0,0,0.75)" : "rgba(255,255,255,0.28)",
+                        display: "block",
+                        transition: "color 0.25s ease",
+                      }} />
                     </div>
-                  </div>
-                )}
-              </div>
-            )
-          })}
+                  </foreignObject>
+
+                  {/* Label */}
+                  <text
+                    x={x} y={y + (isMobile ? 13 : 17)}
+                    textAnchor="middle"
+                    fill={active ? "rgba(0,0,0,0.65)" : "rgba(255,255,255,0.25)"}
+                    fontSize={isMobile ? 6 : 7.5}
+                    fontFamily="monospace"
+                    fontWeight={700}
+                    letterSpacing="0.08em"
+                    style={{ pointerEvents: "none", transition: "fill 0.25s ease" }}
+                  >
+                    {cat.short}
+                  </text>
+
+                  {/* Count badge — top right corner of hex */}
+                  <circle
+                    cx={x + hexR * 0.58} cy={y - hexR * 0.58}
+                    r={isMobile ? 8.5 : 10.5}
+                    fill={active ? "rgba(0,0,0,0.2)" : "#111"}
+                    stroke={active ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.08)"}
+                    strokeWidth={1}
+                    style={{ transition: "all 0.25s ease" }}
+                  />
+                  <text
+                    x={x + hexR * 0.58} y={y - hexR * 0.58 + 4}
+                    textAnchor="middle"
+                    fill={active ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.3)"}
+                    fontSize={isMobile ? 7 : 8.5}
+                    fontFamily="monospace"
+                    fontWeight={800}
+                    style={{ pointerEvents: "none", transition: "fill 0.25s ease" }}
+                  >
+                    {cat.events.length}
+                  </text>
+
+                  {/* Invisible full hit area */}
+                  <path
+                    d={hexPath(x, y, hexR + 4)}
+                    fill="transparent"
+                    stroke="none"
+                    style={{ cursor: "pointer" }}
+                  />
+                </g>
+              )
+            })}
+          </svg>
         </div>
 
-        {/* Bottom CTA */}
-        <div
-          className="mt-8 text-center relative z-10"
-          style={{
-            opacity: Math.max(0, (sectionProgress - 0.85) / 0.15),
-          }}
-        >
-          <p className="text-white/40 text-sm">Total Events: 28+</p>
+        {/* ── EVENT PANEL ── */}
+        <div style={{ flex: 1, minWidth: 0, width: "100%" }}>
+
+          {/* Category label row */}
+          <div style={{
+            display: "flex",
+            alignItems: "baseline",
+            gap: 16,
+            marginBottom: 24,
+            paddingBottom: 20,
+            borderBottom: `2px solid ${selectedCat.color}`,
+            transition: "border-color 0.3s ease",
+          }}>
+            <span style={{
+              fontFamily: "monospace",
+              fontSize: 11,
+              color: "rgba(255,255,255,0.25)",
+              letterSpacing: "0.2em",
+            }}>
+              {selectedCat.index}
+            </span>
+            <h3 style={{
+              margin: 0,
+              fontFamily: "'Palatino Linotype', 'Book Antiqua', Georgia, serif",
+              fontWeight: 800,
+              fontSize: isMobile ? 22 : 30,
+              color: "white",
+              letterSpacing: "-0.02em",
+              lineHeight: 1,
+              flex: 1,
+            }}>
+              {selectedCat.title}
+            </h3>
+            <div style={{
+              width: 36, height: 36,
+              borderRadius: "50%",
+              background: selectedCat.color,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              flexShrink: 0,
+              transition: "background 0.3s ease",
+            }}>
+              {(() => { const Icon = selectedCat.icon; return <Icon style={{ width: 16, height: 16, color: "rgba(0,0,0,0.7)" }} /> })()}
+            </div>
+          </div>
+
+          {/* Events list */}
+          <div
+            key={animKey}
+            style={{ display: "flex", flexDirection: "column" }}
+          >
+            {selectedCat.events.map((ev, i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 16,
+                  padding: "14px 0",
+                  borderBottom: "1px solid rgba(255,255,255,0.06)",
+                  animation: `item-in 0.3s ease ${i * 0.05}s both`,
+                }}
+              >
+                {/* Number */}
+                <span style={{
+                  fontFamily: "monospace",
+                  fontSize: 10,
+                  color: "rgba(255,255,255,0.18)",
+                  letterSpacing: "0.1em",
+                  width: 20,
+                  flexShrink: 0,
+                  textAlign: "right",
+                }}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+
+                {/* Divider tick */}
+                <div style={{
+                  width: 1,
+                  height: 20,
+                  background: ev.flagship ? selectedCat.color : "rgba(255,255,255,0.1)",
+                  flexShrink: 0,
+                  transition: "background 0.3s",
+                }} />
+
+                {/* Name */}
+                <span style={{
+                  flex: 1,
+                  fontFamily: "'Palatino Linotype', 'Book Antiqua', Georgia, serif",
+                  fontSize: isMobile ? 14 : 16,
+                  fontWeight: ev.flagship ? 600 : 400,
+                  color: ev.flagship ? "white" : "rgba(255,255,255,0.38)",
+                  letterSpacing: "0.01em",
+                  transition: "color 0.3s",
+                }}>
+                  {ev.name}
+                </span>
+
+                {/* Flagship marker */}
+                {ev.flagship && (
+                  <div style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: selectedCat.color,
+                    flexShrink: 0,
+                    transition: "background 0.3s",
+                  }} />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Meta row */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 24,
+            marginTop: 20,
+            paddingTop: 16,
+          }}>
+            <span style={{
+              fontFamily: "monospace", fontSize: 9,
+              color: "rgba(255,255,255,0.2)", letterSpacing: "0.2em",
+            }}>
+              {selectedCat.events.length} EVENT{selectedCat.events.length !== 1 ? "S" : ""}
+            </span>
+            {selectedCat.events.filter(e => e.flagship).length > 0 && (
+              <span style={{
+                fontFamily: "monospace", fontSize: 9,
+                color: "rgba(255,255,255,0.2)", letterSpacing: "0.2em",
+              }}>
+                {selectedCat.events.filter(e => e.flagship).length} FLAGSHIP
+              </span>
+            )}
+            <div style={{ flex: 1 }} />
+            <div style={{
+              width: 8, height: 8, borderRadius: "50%",
+              background: selectedCat.color,
+              transition: "background 0.3s",
+            }} />
+          </div>
+
+          {/* ── Quick-nav ── */}
+          <div style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 6,
+            marginTop: 28,
+            paddingTop: 20,
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+          }}>
+            {CATEGORIES.map(cat => {
+              const active = selected === cat.id
+              return (
+                <button
+                  key={cat.id}
+                  className="jump-pill"
+                  onClick={() => handleSelect(cat.id)}
+                  style={{
+                    padding: "5px 12px",
+                    borderRadius: 2,
+                    border: active
+                      ? `1px solid ${cat.color}`
+                      : "1px solid rgba(255,255,255,0.08)",
+                    background: active ? cat.color : "transparent",
+                    color: active ? "rgba(0,0,0,0.75)" : "rgba(255,255,255,0.28)",
+                    fontSize: 8.5,
+                    fontFamily: "monospace",
+                    letterSpacing: "0.12em",
+                    fontWeight: active ? 700 : 400,
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  {cat.short}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* ── Stats ── */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            marginTop: 20,
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            opacity: sp > 0.4 ? 1 : 0,
+            transform: sp > 0.4 ? "translateY(0)" : "translateY(8px)",
+            transition: "opacity 0.5s ease, transform 0.5s ease",
+          }}>
+            {[
+              { n: "08", l: "CATEGORIES" },
+              { n: "28+", l: "EVENTS" },
+              { n: "12", l: "FLAGSHIP" },
+            ].map((s, i) => (
+              <div key={i} style={{
+                padding: "16px 0",
+                textAlign: i === 0 ? "left" : i === 2 ? "right" : "center",
+                borderRight: i < 2 ? "1px solid rgba(255,255,255,0.06)" : "none",
+              }}>
+                <div style={{
+                  color: "white",
+                  fontSize: isMobile ? 20 : 26,
+                  fontWeight: 900,
+                  fontFamily: "'Palatino Linotype', Georgia, serif",
+                  lineHeight: 1,
+                  letterSpacing: "-0.02em",
+                }}>
+                  {s.n}
+                </div>
+                <div style={{
+                  color: "rgba(255,255,255,0.2)",
+                  fontSize: 8,
+                  letterSpacing: "0.2em",
+                  marginTop: 5,
+                  fontFamily: "monospace",
+                }}>
+                  {s.l}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
