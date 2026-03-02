@@ -347,12 +347,13 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
         const isMobile = window.innerWidth < 768
         const fontSize = Math.round((isMobile ? 5 : 11) * dpr)
         ctx.fillStyle = "rgba(255, 255, 255, 0.4)"
-        ctx.font = `500 ${fontSize}px sans-serif`
+        ctx.font = `500 ${fontSize}px "Geist Mono", "JetBrains Mono", "SF Mono", Menlo, monospace`
         ctx.letterSpacing = `${Math.round(0.2 * fontSize)}px`
         const lineH = (isMobile ? 10 : 20) * dpr
-        ctx.fillText("LUMINUS IS MORE THAN A TECH FEST — IT'S A CONVERGENCE OF THE BRIGHTEST", centerX, centerY)
-        ctx.fillText("MINDS, BOLDEST IDEAS, AND MOST DISRUPTIVE TECHNOLOGIES. FOR THREE DAYS,", centerX, centerY + lineH)
-        ctx.fillText("OUR CAMPUS TRANSFORMS INTO A LAUNCHPAD FOR INNOVATION.", centerX, centerY + lineH * 2)
+        ctx.fillText("LUMINUS 2026 IS RNSIT'S FIRST NATIONAL-LEVEL INTERCOLLEGIATE TECH FEST,", centerX, centerY)
+        ctx.fillText("LAUNCHED IN ITS LANDMARK 25TH YEAR TO BEGIN A LEGACY OF INNOVATION.", centerX, centerY + lineH)
+        ctx.fillText("WITH 2,000+ STUDENTS NATIONWIDE, IT BLENDS TECHNICAL AND INTERDISCIPLINARY", centerX, centerY + lineH * 2)
+        ctx.fillText("CHALLENGES THAT INSPIRE YOU TO COMPETE, GROW, AND SHINE.", centerX, centerY + lineH * 3)
         ctx.restore()
       }
 
