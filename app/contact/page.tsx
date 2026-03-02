@@ -28,7 +28,11 @@ const FAQ_ITEMS = [
   },
   {
     q: "How can I get in touch with the organisers?",
-    a: "Use the contact details below or reach out via the email/phone provided. For event-specific queries, mention the event name in your message.",
+    a: "Use the contact details above or reach out via the email/phone provided. For event-specific queries, mention the event name in your message.",
+  },
+  {
+    q: "At what time will the events start?",
+    a: "Timings for the events will be announced by the event coordinators",
   },
 ]
 
@@ -56,25 +60,42 @@ export default function ContactPage() {
                 <ul className="space-y-4 text-white/90">
                   <li>
                     <span className="text-white/50 text-sm block mb-0.5">Email</span>
-                    <a
-                      href="mailto:luminus@rnsit.ac.in"
+                    <a 
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to=luminus@rnsit.ac.in" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
                       className="text-white hover:text-white/90 underline underline-offset-2"
                     >
                       luminus@rnsit.ac.in
                     </a>
+
                   </li>
                   <li>
                     <span className="text-white/50 text-sm block mb-0.5">General enquiries</span>
-                    <a
-                      href="mailto:events@luminus.in"
+                    <a 
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to=events@luminus.in&su=Event%20Inquiry&body=Hello%20Team,"
+                      target="_blank" 
+                      rel="noopener noreferrer"
                       className="text-white hover:text-white/90 underline underline-offset-2"
                     >
                       events@luminus.in
                     </a>
+
                   </li>
                   <li>
                     <span className="text-white/50 text-sm block mb-0.5">Venue</span>
-                    <p className="text-white/90">RNSIT, Bengaluru</p>
+                    <a 
+                      href='https://maps.app.goo.gl/L7cb1NMmTcFtfPR2A'
+                      className="text-white hover:text-white/90 underline underline-offset-2"
+                      target="_blank" 
+                      rel="noopener noreferrer" >
+                      <p className="text-white/90">RNS Institute of Technology,
+                                                    Dr. Vishnuvardhan Road
+                                                    R R Nagar Post
+                                                    Channasandra
+                                                    Bengaluru -560 098
+                      </p>
+                    </a>
                   </li>
                 </ul>
                 <p className="mt-6 text-sm text-white/50">
