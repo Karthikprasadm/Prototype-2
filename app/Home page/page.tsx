@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import LuminusParticles from "@/components/LuminusParticles"
+import LuminusParticles from "./vercel-logo-particles"
 
 export default function Page() {
   const [opacity, setOpacity] = useState(1)
