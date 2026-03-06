@@ -10,6 +10,7 @@ export function SiteBackground() {
     const isEventsPage = pathname?.startsWith("/events") ?? false;
     const isContactPage = pathname === "/contact";
     const hidePurpleGradient = isEventsPage || isContactPage;
+    const objectsZ = isEventsPage || isContactPage ? "z-[11]" : "z-0";
 
     useEffect(() => {
         let ticking = false;
@@ -54,7 +55,7 @@ export function SiteBackground() {
             )}
 
             {/* Floating 3D Objects */}
-            <RandomObjects />
+            <RandomObjects zIndexClass={objectsZ} />
 
             {/* Scroll-triggered Black Overlay — fades in on scroll so purplish theme vanishes; particle canvas (z-10) stays on top */}
             <div

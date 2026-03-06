@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { Menu, Search, X, ArrowUpRight } from "lucide-react"
+import { Menu, Search, X, ArrowUpRight, Home, LayoutGrid, CalendarDays, Phone } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { departments } from "@/lib/events-data"
 
@@ -52,10 +52,10 @@ function getSearchResults(query: string): SearchEntry[] {
 }
 
 const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/events", label: "Events" },
-  { href: "/schedule", label: "Schedule" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/events", label: "Events", icon: LayoutGrid },
+  { href: "/schedule", label: "Schedule", icon: CalendarDays },
+  { href: "/contact", label: "Contact", icon: Phone },
 ]
 
 export function SiteNav() {
@@ -374,69 +374,158 @@ export function SiteNav() {
       {/* Mobile Navigation */}
       <div className="md:hidden">
 
-        {/* Bottom sheet backdrop */}
+        <style>{`
+          @keyframes glassMenuIn {
+            from { opacity: 0; transform: translate(-50%, -47%) scale(0.94); }
+            to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+          }
+          @keyframes glassItemIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
+
+        {/* Backdrop */}
         <div
-          className={cn(
-            "fixed inset-0 z-40 transition-all duration-300",
-            isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-          )}
-          style={{ background: "rgba(0,0,0,0.45)", backdropFilter: isMobileMenuOpen ? "blur(4px)" : "none" }}
+          style={{
+            position: "fixed", inset: 0, zIndex: 40,
+            opacity: isMobileMenuOpen ? 1 : 0,
+            pointerEvents: isMobileMenuOpen ? "auto" : "none",
+            background: "rgba(2,2,12,0.35)",
+            backdropFilter: isMobileMenuOpen ? "blur(6px)" : "none",
+            transition: "opacity 300ms ease",
+          }}
           onClick={() => setIsMobileMenuOpen(false)}
           aria-hidden
         />
 
-        {/* Bottom sheet */}
+        {/* Glass card */}
         <div
-          className="fixed bottom-0 left-0 right-0 z-50"
           style={{
-            transform: isMobileMenuOpen ? "translateY(0)" : "translateY(105%)",
-            transition: "transform 420ms cubic-bezier(0.32,0.72,0,1)",
+            position: "fixed",
+            top: "50%", left: "50%",
+            zIndex: 50,
+            width: "min(86vw, 320px)",
+            animation: isMobileMenuOpen ? "glassMenuIn 0.35s cubic-bezier(0.22,1,0.36,1) both" : "none",
+            opacity: isMobileMenuOpen ? 1 : 0,
+            pointerEvents: isMobileMenuOpen ? "auto" : "none",
+            transform: "translate(-50%, -50%)",
           }}
         >
-          <div
-            className="rounded-t-3xl overflow-hidden"
-            style={{
-              background: "rgba(6,7,18,0.92)",
-              borderTop: "1px solid rgba(255,255,255,0.08)",
-              borderLeft: "1px solid rgba(255,255,255,0.06)",
-              borderRight: "1px solid rgba(255,255,255,0.06)",
-              backdropFilter: "blur(32px)",
-              boxShadow: "0 -16px 48px rgba(0,0,0,0.6), 0 -1px 0 rgba(168,85,247,0.08)",
-            }}
-          >
-            {/* Handle */}
-            <div className="flex justify-center pt-3.5 pb-2">
-              <div className="h-[3px] w-9 rounded-full bg-white/20" />
+          {/* Card surface */}
+          <div style={{
+            borderRadius: 24,
+            overflow: "hidden",
+            background: "rgba(8,8,12,0.85)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            boxShadow: "0 24px 48px rgba(0,0,0,0.45)",
+          }}>
+
+
+            {/* Header */}
+            <div style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "16px 20px 12px",
+              borderBottom: "1px solid rgba(255,255,255,0.06)",
+            }}>
+              <span style={{
+                fontFamily: "var(--font-geist-mono), monospace",
+                fontSize: 9, letterSpacing: "0.3em",
+                color: "rgba(255,255,255,0.25)",
+                textTransform: "uppercase",
+              }}>
+                Menu
+              </span>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 5,
+              }}>
+                <div style={{ width: 5, height: 5, borderRadius: "50%", background: "rgba(139,92,246,0.5)" }} />
+                <div style={{ width: 5, height: 5, borderRadius: "50%", background: "rgba(59,130,246,0.35)" }} />
+              </div>
             </div>
 
-            {/* Nav links */}
-            <div className="px-4 pb-8 pt-2 flex flex-col gap-1">
-              {navItems.map(({ href, label }) => {
+            {/* Nav items */}
+            <nav style={{ padding: "8px 10px" }}>
+              {navItems.map(({ href, label, icon: Icon }, index) => {
                 const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href)
                 return (
                   <Link
                     key={href}
                     href={href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={cn(
-                      "relative flex items-center justify-between px-4 py-3.5 rounded-2xl text-[15px] font-medium transition-colors duration-150",
-                      isActive
-                        ? "text-white"
-                        : "text-white/45 active:bg-white/[0.05]"
-                    )}
-                    style={isActive ? { background: "rgba(168,85,247,0.09)" } : {}}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 13,
+                      padding: "11px 12px",
+                      borderRadius: 14,
+                      marginBottom: 3,
+                      textDecoration: "none",
+                      background: isActive
+                        ? "rgba(255,255,255,0.07)"
+                        : "transparent",
+                      border: isActive
+                        ? "1px solid rgba(255,255,255,0.09)"
+                        : "1px solid transparent",
+                      transition: "all 0.2s ease",
+                      animation: isMobileMenuOpen
+                        ? `glassItemIn 0.35s cubic-bezier(0.22,1,0.36,1) ${0.1 + index * 0.06}s both`
+                        : "none",
+                    }}
                   >
-                    <span>{label}</span>
+                    {/* Icon */}
+                    <div style={{
+                      width: 34, height: 34, borderRadius: 10, flexShrink: 0,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      background: isActive
+                        ? "rgba(139,92,246,0.15)"
+                        : "rgba(255,255,255,0.05)",
+                      border: `1px solid ${isActive ? "rgba(139,92,246,0.25)" : "rgba(255,255,255,0.07)"}`,
+                      transition: "all 0.2s ease",
+                    }}>
+                      <Icon size={15} style={{
+                        color: isActive ? "rgba(196,167,255,0.95)" : "rgba(255,255,255,0.35)",
+                        transition: "color 0.2s ease",
+                      }} />
+                    </div>
+
+                    {/* Label */}
+                    <span style={{
+                      flex: 1,
+                      fontSize: 16,
+                      fontWeight: isActive ? 500 : 400,
+                      color: isActive ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.45)",
+                      letterSpacing: "0.01em",
+                      transition: "color 0.2s ease",
+                    }}>
+                      {label}
+                    </span>
+
+                    {/* Active indicator */}
                     {isActive && (
-                      <span
-                        className="h-2 w-2 rounded-full shrink-0"
-                        style={{ background: "rgba(192,132,252,0.9)", boxShadow: "0 0 6px rgba(168,85,247,0.6)" }}
-                        aria-hidden
-                      />
+                      <div style={{
+                        width: 6, height: 6, borderRadius: "50%", flexShrink: 0,
+                        background: "rgba(139,92,246,0.8)",
+                      }} aria-hidden />
                     )}
                   </Link>
                 )
               })}
+            </nav>
+
+            {/* Footer */}
+            <div style={{
+              borderTop: "1px solid rgba(255,255,255,0.05)",
+              padding: "10px 20px 14px",
+            }}>
+              <p style={{
+                fontFamily: "var(--font-geist-mono), monospace",
+                fontSize: 9, letterSpacing: "0.22em",
+                color: "rgba(255,255,255,0.13)",
+                textTransform: "uppercase",
+              }}>
+                Luminus · RNSIT · 2026
+              </p>
             </div>
           </div>
         </div>

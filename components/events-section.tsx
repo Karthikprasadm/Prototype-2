@@ -57,6 +57,15 @@ const COLORS = [
   "#c4b5fd",
 ]
 
+/** Returns black or white depending on which has better contrast against the given hex color. */
+function contrastColor(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return luminance > 0.55 ? "rgba(0,0,0,0.9)" : "rgba(255,255,255,0.95)"
+}
+
 const CATEGORIES = departments.map((dept, i) => ({
   id: dept.id,
   title: dept.fullName ?? dept.name,
@@ -126,7 +135,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
     setAnimKey(k => k + 1)
   }
 
-  const hexR = isMobile ? Math.min(vw / 9.8, 40) : 62
+  const hexR = isMobile ? Math.min(vw / 6.5, 56) : 62
   const gapX = hexR * 1.78
   const gapY = hexR * 1.54
   const hexCols = isMobile ? 2 : 4
@@ -165,17 +174,33 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
           from { opacity: 0; transform: translateX(-8px); }
           to   { opacity: 1; transform: translateX(0); }
         }
+        /* Desktop: full effect with blur */
         @keyframes hex-in {
-          from { opacity: 0; transform: scale(0.6); }
-          to   { opacity: 1; transform: scale(1); }
+          0%   { opacity: 0; transform: scale(0.55) translateY(16px); filter: blur(3px); }
+          65%  { opacity: 1; filter: blur(0px); }
+          82%  { transform: scale(1.05) translateY(-2px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px); }
+        }
+        /* Mobile: lightweight, no blur — only opacity + scale for GPU friendliness */
+        @keyframes hex-in-mobile {
+          0%   { opacity: 0; transform: scale(0.6) translateY(10px); }
+          75%  { transform: scale(1.04) translateY(-1px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes hex-glow-pulse {
+          0%   { opacity: 0; }
+          35%  { opacity: 0.5; }
+          100% { opacity: 0; }
         }
         @keyframes tick-in {
           from { stroke-dashoffset: 200; }
           to   { stroke-dashoffset: 0; }
         }
-        .hex-g { cursor: pointer; }
-        .hex-g:not(.is-active):hover .hex-bg { fill: rgba(255,255,255,0.1); }
+        .hex-g { cursor: pointer; will-change: transform, opacity; }
+        .hex-g:not(.is-active):hover .hex-bg { fill: rgba(255,255,255,0.08); }
+        .hex-g:not(.is-active):hover .hex-stroke { stroke: rgba(255,255,255,0.9) !important; }
         .jump-pill:hover { background: rgba(255,255,255,0.12) !important; color: rgba(255,255,255,0.9) !important; }
+        a:hover .view-pill { background: rgba(255,255,255,0.13) !important; color: rgba(255,255,255,0.9) !important; border-color: rgba(255,255,255,0.22) !important; }
       `}</style>
 
       {/* ── TITLE ── */}
@@ -245,12 +270,22 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
               <filter id="f-none" />
             </defs>
 
-            {CATEGORIES.map((cat, i) => {
+            {(() => {
+              // Compute once outside the per-hex loop
+              const sectionVisible = sp > 0.05
+              // Correct perimeter: regular hexagon side = circumradius, so P = 6r
+              const hexPerimeter = Math.round(6 * (hexR - 2))
+              // Slightly faster stagger on mobile (fewer pixels to travel, smaller screen)
+              const staggerStep = isMobile ? 0.1 : 0.13
+              // Animation name — no blur/filter on mobile for GPU performance
+              const hexAnim = isMobile ? "hex-in-mobile" : "hex-in"
+
+              return CATEGORIES.map((cat, i) => {
               const { x, y } = centers[i]
               const active = selected === cat.id
-              const revealed = sp > i / (CATEGORIES.length + 2)
               const Icon = cat.icon
-              const iconSz = isMobile ? 13 : 16
+              const iconSz = isMobile ? Math.round(hexR * 0.32) : 16
+              const delay = sectionVisible ? `${i * staggerStep}s` : "0s"
 
               return (
                 <g
@@ -258,30 +293,60 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
                   className={`hex-g ${active ? "is-active" : ""}`}
                   onClick={() => handleSelect(cat.id)}
                   style={{
-                    opacity: revealed ? 1 : 0,
-                    animation: revealed
-                      ? `hex-in 0.45s cubic-bezier(0.34,1.2,0.64,1) ${i * 0.06}s both`
+                    opacity: sectionVisible ? 1 : 0,
+                    animation: sectionVisible
+                      ? `${hexAnim} 0.5s cubic-bezier(0.34,1.28,0.64,1) ${delay} both`
                       : "none",
+                    willChange: "transform, opacity",
                   }}
                 >
-                  {/* Active: filled solid hex in category color */}
-                  {/* Inactive: just a thin stroke hex */}
+                  {/* Glow pulse on reveal — desktop only (filter is expensive on mobile) */}
+                  {sectionVisible && !active && !isMobile && (
+                    <path
+                      d={hexPath(x, y, hexR + 4)}
+                      fill="none"
+                      stroke="rgba(255,255,255,0.3)"
+                      strokeWidth={5}
+                      style={{
+                        pointerEvents: "none",
+                        animation: `hex-glow-pulse 0.8s ease ${delay} both`,
+                        filter: "blur(3px)",
+                      }}
+                    />
+                  )}
 
                   {/* Hex fill */}
                   <path
                     className="hex-bg"
                     d={hexPath(x, y, hexR - 2)}
                     fill={active ? cat.color : "transparent"}
+                    stroke="none"
+                    style={{ transition: "fill 0.3s ease" }}
+                  />
+
+                  {/* Hex border — stroke draws on via dashoffset transition */}
+                  <path
+                    className="hex-stroke"
+                    d={hexPath(x, y, hexR - 2)}
+                    fill="none"
                     stroke={active ? cat.color : "rgba(255,255,255,0.62)"}
-                    strokeWidth={active ? 0 : 1.5}
-                    style={{ transition: "fill 0.25s ease, stroke 0.25s ease" }}
+                    strokeWidth={active ? 2 : 1.5}
+                    strokeDasharray={active ? undefined : hexPerimeter}
+                    strokeDashoffset={active ? undefined : (sectionVisible ? 0 : hexPerimeter)}
+                    strokeLinecap="round"
+                    style={{
+                      transition: active
+                        ? "stroke 0.3s ease, stroke-width 0.3s ease"
+                        : `stroke 0.3s ease, stroke-width 0.3s ease, stroke-dashoffset 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}`,
+                      pointerEvents: "none",
+                    }}
                   />
 
                   {/* Active index watermark */}
                   {active && (
                     <text
                       x={x - hexR * 0.55} y={y - hexR * 0.3}
-                      fill="rgba(0,0,0,0.12)"
+                      fill={contrastColor(cat.color) === "rgba(0,0,0,0.9)" ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.1)"}
                       fontSize={hexR * 0.7}
                       fontFamily="monospace"
                       fontWeight={900}
@@ -294,7 +359,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
                   {/* Icon */}
                   <foreignObject
                     x={x - iconSz / 2}
-                    y={y - (isMobile ? 10 : 14) - iconSz / 2}
+                    y={y - (isMobile ? hexR * 0.25 : 14) - iconSz / 2}
                     width={iconSz}
                     height={iconSz}
                     style={{ pointerEvents: "none", overflow: "visible" }}
@@ -306,7 +371,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
                       <Icon style={{
                         width: iconSz,
                         height: iconSz,
-                        color: active ? "rgba(0,0,0,0.75)" : "rgba(255,255,255,0.9)",
+                        color: active ? contrastColor(cat.color) : "rgba(255,255,255,0.9)",
                         display: "block",
                         transition: "color 0.25s ease",
                       }} />
@@ -315,10 +380,10 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
 
                   {/* Label */}
                   <text
-                    x={x} y={y + (isMobile ? 13 : 17)}
+                    x={x} y={y + (isMobile ? hexR * 0.325 : 17)}
                     textAnchor="middle"
-                    fill={active ? "rgba(0,0,0,0.7)" : "rgba(255,255,255,0.95)"}
-                    fontSize={isMobile ? 6.8 : 8.5}
+                    fill={active ? contrastColor(cat.color) : "rgba(255,255,255,0.95)"}
+                    fontSize={isMobile ? hexR * 0.17 : 8.5}
                     fontFamily="monospace"
                     fontWeight={700}
                     letterSpacing="0.08em"
@@ -330,17 +395,17 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
                   {/* Count badge — top right corner of hex */}
                   <circle
                     cx={x + hexR * 0.58} cy={y - hexR * 0.58}
-                    r={isMobile ? 8.5 : 10.5}
-                    fill={active ? "rgba(0,0,0,0.3)" : "rgba(5,8,18,0.96)"}
-                    stroke={active ? "rgba(0,0,0,0.15)" : "rgba(255,255,255,0.36)"}
+                    r={isMobile ? hexR * 0.21 : 10.5}
+                    fill={active ? "rgba(0,0,0,0.55)" : "rgba(5,8,18,0.96)"}
+                    stroke={active ? "rgba(0,0,0,0.2)" : "rgba(255,255,255,0.36)"}
                     strokeWidth={1}
                     style={{ transition: "all 0.25s ease" }}
                   />
                   <text
                     x={x + hexR * 0.58} y={y - hexR * 0.58 + 4}
                     textAnchor="middle"
-                    fill={active ? "rgba(0,0,0,0.82)" : "rgba(255,255,255,0.98)"}
-                    fontSize={isMobile ? 7 : 8.5}
+                    fill="rgba(255,255,255,0.98)"
+                    fontSize={isMobile ? hexR * 0.175 : 8.5}
                     fontFamily="monospace"
                     fontWeight={800}
                     style={{ pointerEvents: "none", transition: "fill 0.25s ease" }}
@@ -357,7 +422,8 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
                   />
                 </g>
               )
-            })}
+            })
+            })()} 
           </svg>
         </div>
 
@@ -476,6 +542,26 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
                     transition: "background 0.3s",
                   }} />
                 )}
+
+                {/* View pill */}
+                <span
+                  className="view-pill"
+                  style={{
+                    flexShrink: 0,
+                    fontSize: 10,
+                    fontFamily: "monospace",
+                    letterSpacing: "0.12em",
+                    color: "rgba(255,255,255,0.95)",
+                    background: "rgba(255,255,255,0.18)",
+                    border: "1px solid rgba(255,255,255,0.35)",
+                    borderRadius: 999,
+                    padding: "5px 13px",
+                    whiteSpace: "nowrap",
+                    transition: "background 0.2s, color 0.2s, border-color 0.2s",
+                  }}
+                >
+                  View →
+                </span>
               </Link>
             ))}
           </div>
