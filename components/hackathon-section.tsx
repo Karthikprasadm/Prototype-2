@@ -303,7 +303,7 @@ export default function HackathonSection() {
             >
               <p className="tag-mono" style={{ fontSize: '8px', color: 'rgba(236,197,255,0.75)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '0.7rem' }}>Total Prize Pool</p>
               <p className="prize-number" style={{ fontSize: 'clamp(2rem, 3.8vw, 3rem)', color: 'rgba(236,197,255,0.95)', lineHeight: 1, textShadow: '0 0 22px rgba(192,132,252,0.24), 0 2px 18px rgba(0,0,0,0.7)' }}>
-                ₹1,20,000
+                ₹1,20,000+
               </p>
             </div>
 
