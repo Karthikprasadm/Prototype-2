@@ -55,7 +55,7 @@ function FloatingModel({ modelPath, startPos, scale, speed, direction }: { model
 // Pre-load all GLTF files
 MODEL_PATHS.forEach((path) => useGLTF.preload(path));
 
-export function RandomObjects() {
+export function RandomObjects({ zIndexClass = "z-0" }: { zIndexClass?: string }) {
     const [objects, setObjects] = useState<{ id: number; modelPath: string; startPos: [number, number, number]; scale: number; speed: number; direction: [number, number, number] }[]>([]);
     const [visible, setVisible] = useState(true);
 
@@ -130,7 +130,10 @@ export function RandomObjects() {
     if (objects.length === 0 || !visible) return null;
 
     return (
-        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden>
+        <div
+            className={`fixed inset-0 pointer-events-none ${zIndexClass} overflow-hidden`}
+            aria-hidden
+        >
             <Canvas camera={{ position: [0, 0, 15], fov: 45 }} frameloop="always" dpr={[1, 2]}>
                 <ambientLight intensity={0} />
                 <directionalLight position={[0, 10, 0]} intensity={1} />

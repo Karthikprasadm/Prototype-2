@@ -22,11 +22,19 @@ export default async function DepartmentEventsPage({ params }: PageProps) {
   const dept = getDepartmentById(slug)
   if (!dept) notFound()
 
+  const eventsForDisplay = dept.events
+    .map((ev, originalIndex) => ({ ev, originalIndex }))
+    .sort((a, b) => {
+      const rank = (e: (typeof a)["ev"]) =>
+        e.tag === "Grand Hackathon" || e.type === "Flagship" ? 0 : 1
+      return rank(a.ev) - rank(b.ev)
+    })
+
   return (
     <main className="relative min-h-screen">
       <EventHighlighter />
       <LuminusParticles startDispersed hideCursor={false} particleGap={4} />
-      <div className="relative z-10 pt-24 px-6 pb-24">
+      <div className="relative z-[20] pt-24 px-6 pb-24">
         <div className="max-w-3xl mx-auto text-white/90">
         <Link
           href="/events"
@@ -41,12 +49,12 @@ export default async function DepartmentEventsPage({ params }: PageProps) {
           {dept.events.length} event{dept.events.length !== 1 ? "s" : ""} in this department.
         </p>
         <div className="space-y-6">
-          {dept.events.map((ev, eventIndex) => {
+          {eventsForDisplay.map(({ ev, originalIndex }, displayIndex) => {
             const primaryContact = ev.contacts?.[0]
             return (
               <Card
                 key={ev.name}
-                id={`event-${eventIndex}`}
+                id={`event-${originalIndex}`}
                 className="rounded-2xl border-white/10 bg-white/5 backdrop-blur-md shadow-lg shadow-black/20 overflow-hidden"
               >
                 <CardHeader className="pb-3 px-6 pt-6">
@@ -80,14 +88,27 @@ export default async function DepartmentEventsPage({ params }: PageProps) {
                       <p><span className="text-white/50">Registration fee:</span> ₹{ev.registrationFee}</p>
                     )}
                     {dept.id !== "grand-hackathon" && (
-                      <p><span className="text-white/50">Prize pool:</span> ₹{ev.prize.toLocaleString("en-IN")}</p>
+                      <p className="flex items-center gap-2">
+                        <span className="text-white/50">Prize pool:</span>
+                        <span
+                          className="font-semibold tracking-tight"
+                          style={{
+                            color: ev.type === "Flagship" ? "rgba(251,191,36,0.95)" : "rgba(147,197,253,0.95)",
+                            textShadow: ev.type === "Flagship"
+                              ? "0 0 18px rgba(251,191,36,0.35)"
+                              : "0 0 14px rgba(147,197,253,0.25)",
+                          }}
+                        >
+                          ₹{ev.prize.toLocaleString("en-IN")}{ev.type === "Flagship" ? "+" : ""}
+                        </span>
+                      </p>
                     )}
                   </div>
                   <div className="pt-1">
                     <EventRegisterDialog
                       departmentId={dept.id}
                       departmentName={dept.fullName ?? dept.name}
-                      eventKey={`${dept.id}:${eventIndex + 1}`}
+                      eventKey={`${dept.id}:${originalIndex + 1}`}
                       eventName={ev.name}
                       teamSize={ev.teamSize}
                       registrationFee={ev.registrationFee}

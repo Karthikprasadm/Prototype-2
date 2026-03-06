@@ -381,11 +381,25 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
             ]
 
         ctx.fillStyle = "rgba(255, 255, 255, 0.38)"
-        ctx.font = `500 ${fontSize}px "Space Mono", "JetBrains Mono", "SF Mono", Menlo, monospace`
-        ctx.letterSpacing = `${Math.round(0.18 * fontSize)}px`
+        const letterSpacingRatio = isMobile ? 0.08 : 0.18
+        const fontFamily = `"Space Mono", "JetBrains Mono", "SF Mono", Menlo, monospace`
+        ctx.font = `500 ${fontSize}px ${fontFamily}`
+        ctx.letterSpacing = `${Math.round(letterSpacingRatio * fontSize)}px`
+
+        // Scale font down if the longest line overflows the canvas
+        const maxLineWidth = canvas.width * 0.9
+        const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b), "")
+        const measuredWidth = ctx.measureText(longestLine).width
+        let effectiveFontSize = fontSize
+        if (measuredWidth > maxLineWidth) {
+          effectiveFontSize = Math.floor(fontSize * (maxLineWidth / measuredWidth))
+          ctx.font = `500 ${effectiveFontSize}px ${fontFamily}`
+          ctx.letterSpacing = `${Math.round(letterSpacingRatio * effectiveFontSize)}px`
+        }
+        const effectiveLineH = (lineH / fontSize) * effectiveFontSize
 
         lines.forEach((line, idx) => {
-          ctx.fillText(line, centerX, centerY + lineH * idx)
+          ctx.fillText(line, centerX, centerY + effectiveLineH * idx)
         })
         ctx.restore()
       }
