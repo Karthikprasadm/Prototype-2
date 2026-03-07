@@ -420,8 +420,6 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
         p.x += p.vx
         p.y += p.vy
 
-        scrollVelocity *= isMobile ? 0.9 : 0.92
-
         const twinkle = 0.6 + 0.4 * Math.sin(time * 0.003 + p.phase)
         const readabilityDim = 1 - 0.45 * scrollProgress
 
@@ -435,6 +433,9 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
         ctx.fillStyle = `rgba(${Math.round(p.r)},${Math.round(p.g)},${Math.round(p.b)},${twinkle * readabilityDim})`
         ctx.fillRect(p.x, p.y, p.size, p.size)
       }
+
+      // Decay scroll velocity once per frame, not per particle.
+      scrollVelocity *= isMobile ? 0.9 : 0.92
 
       // Draw text below the logo, fades as user scrolls
       const textAlpha = Math.max(0, 1 - scrollProgress * 3)
