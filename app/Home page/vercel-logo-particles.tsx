@@ -41,9 +41,10 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       const w = canvas.width
       const h = canvas.height
       const mobile = isMobileViewport()
+      // Fewer fill particles when dispersed for performance; logo density is handled by main particles.
       const count = mobile
-        ? Math.min(350, Math.floor((w * h) / (72 * 72))) // even fewer fill particles on mobile
-        : Math.min(1600, Math.floor((w * h) / (44 * 44))) // slightly fewer fill particles on desktop/laptop
+        ? Math.min(220, Math.floor((w * h) / (90 * 90)))
+        : Math.min(1000, Math.floor((w * h) / (55 * 55)))
       fillParticles = []
       for (let i = 0; i < count; i++) {
         fillParticles.push({
@@ -135,6 +136,10 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       const doc = document.documentElement
       const max = doc.scrollHeight - window.innerHeight
       scrollVelocity = Math.abs(window.scrollY - lastScrollY)
+      // Cap scroll velocity on mobile so large flicks don't create jerky motion.
+      if (isMobileViewport()) {
+        scrollVelocity = Math.min(scrollVelocity, 40)
+      }
       lastScrollY = window.scrollY
       const rawProgress = max > 0 ? Math.min(window.scrollY / max, 1) : 1
       // Reach full dispersion earlier so the background is fully scattered
@@ -142,7 +147,8 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       // On PC/laptop and mobile use smaller values so dispersion completes with less scroll (faster).
       // On mobile, finish dispersion very early in the scroll so stars break apart quickly.
       // On desktop, reduce this a bit more so stars disperse faster with less scroll.
-      const dispersionEnd = isMobileViewport() ? 0.1 : 0.24
+      // Make mobile slightly slower and smoother by requiring a bit more scroll.
+      const dispersionEnd = isMobileViewport() ? 0.18 : 0.24
       const normalized = Math.min(rawProgress / dispersionEnd, 1)
       // Smoothstep easing so particles start and finish movement more naturally.
       scrollProgress = normalized * normalized * (3 - 2 * normalized)
@@ -181,9 +187,9 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       if (!imageData) return
       const data = imageData.data
       particles = []
-      // Use a slightly larger gap on all devices so the logo cluster stays clear but not overly dense.
-      const gap = isMobileViewport() ? Math.max(3, particleGap) : Math.max(3, particleGap)
+      // Tighter gap = more particles in the collected logo; we cull drawing when dispersed for performance.
       const isMobile = isMobileViewport()
+      const gap = isMobile ? Math.max(3, particleGap) : Math.max(2, particleGap)
       for (let y = 0; y < canvas.height; y += gap) {
         for (let x = 0; x < canvas.width; x += gap) {
           const i = (y * canvas.width + x) * 4
@@ -209,14 +215,11 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
             }
             particles.push(baseParticle)
 
-            // Make text – especially the lower "2026" band – denser so it's clearly legible,
-            // but keep desktop/laptop density moderate.
+            // Make text – especially the lower "2026" band – denser so the logo is clearly legible when collected.
             if (isTextPixel) {
-              // On mobile, keep the extra density focused mostly on the "2026" band;
-              // on desktop, use some duplication for crisper text, but less than before.
               const extraCount = isMobile
-                ? (y > canvas.height * 0.6 ? 1 : 0)
-                : (y > canvas.height * 0.6 ? 1 : 0)
+                ? (y > canvas.height * 0.6 ? 2 : 1)
+                : (y > canvas.height * 0.6 ? 3 : 2)
               for (let n = 0; n < extraCount; n++) {
                 particles.push({
                   x: baseParticle.x + (Math.random() - 0.5) * gap,
@@ -383,21 +386,21 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
         }
 
         // Spring back toward either logo position or dispersed background position.
-        // Slightly stronger on both mobile and desktop so dispersion feels faster.
-        const baseSpring = isMobile ? 0.22 : 0.19
-        const dispersionBoost = (1 - disperse) * (isMobile ? 0.20 : 0.14)
-        const scrollBoost = scrollVelocity * (isMobile ? 0.024 : 0.018)
+        // On mobile, keep forces softer so the dispersion feels smoother and a bit slower.
+        const baseSpring = isMobile ? 0.18 : 0.19
+        const dispersionBoost = (1 - disperse) * (isMobile ? 0.14 : 0.14)
+        const scrollBoost = scrollVelocity * (isMobile ? 0.018 : 0.018)
         const spring = baseSpring + dispersionBoost + scrollBoost
         p.vx += (targetX - p.x) * spring
         p.vy += (targetY - p.y) * spring
 
         // Gentle per-particle drift so motion feels organic, not perfectly straight.
-        const noiseStrength = isMobile ? 0.04 : 0.06
+        const noiseStrength = isMobile ? 0.03 : 0.06
         p.vx += Math.cos(time * 0.0015 + p.phase) * noiseStrength
         p.vy += Math.sin(time * 0.0013 + p.phase) * noiseStrength
 
         // Velocity clamping and friction for smoother easing.
-        const maxSpeed = isMobile ? 26 : 38
+        const maxSpeed = isMobile ? 20 : 38
         const speed = Math.hypot(p.vx, p.vy)
         if (speed > maxSpeed) {
           const scale = maxSpeed / speed
@@ -405,7 +408,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
           p.vy *= scale
         }
 
-        const friction = isMobile ? 0.82 : 0.86
+        const friction = isMobile ? 0.88 : 0.86
         p.vx *= friction
         p.vy *= friction
 
@@ -417,10 +420,11 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
         const twinkle = 0.6 + 0.4 * Math.sin(time * 0.003 + p.phase)
         const readabilityDim = 1 - 0.45 * scrollProgress
 
-        // On mobile, once we're mostly dispersed, only draw every other particle
-        // to keep GPU work lower while the logo has already broken apart.
-        if (isMobile && scrollProgress > 0.7 && idx % 2 === 1) {
-          continue
+        // When dispersed, draw fewer stars for performance; logo (scrollProgress low) keeps full density.
+        if (scrollProgress > 0.5) {
+          if (!isMobile && idx % 2 === 1) continue
+          if (isMobile && scrollProgress > 0.7 && idx % 2 === 1) continue
+          if (isMobile && scrollProgress > 0.88 && idx % 3 !== 0) continue
         }
 
         ctx.fillStyle = `rgba(${Math.round(p.r)},${Math.round(p.g)},${Math.round(p.b)},${twinkle * readabilityDim})`
@@ -432,12 +436,15 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       if (textAlpha > 0) {
         const isMobile = window.innerWidth < 768
         const centerX = canvas.width / 2
-        const centerY = canvas.height / 2 + canvas.height * (isMobile ? 0.2 : 0.24)
+        // On mobile, keep the copy higher so it sits clearly in view.
+        const centerY = canvas.height / 2 + canvas.height * (isMobile ? 0.12 : 0.24)
         ctx.save()
         ctx.globalAlpha = textAlpha
         ctx.textAlign = "center"
-        const fontSize = Math.round((isMobile ? 12 : 11) * dpr)
-        const lineH = (isMobile ? 20 : 20) * dpr
+        // Make mobile text substantially larger for readability on small screens.
+        const baseFont = isMobile ? 16 : 11
+        const fontSize = Math.round(baseFont * dpr)
+        const lineH = (isMobile ? 24 : 20) * dpr
         const lines = isMobile
           ? [
             "LUMINUS 2026 MARKS A NEW BEGINNING AT RNSIT,",
@@ -452,14 +459,15 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
             "CHALLENGES THAT INSPIRE YOU TO COMPETE, GROW, AND SHINE.",
           ]
 
-        ctx.fillStyle = "rgba(255, 255, 255, 0.38)"
-        const letterSpacingRatio = isMobile ? 0.08 : 0.18
+        const textOpacity = isMobile ? 0.75 : 0.38
+        ctx.fillStyle = `rgba(255, 255, 255, ${textOpacity})`
+        const letterSpacingRatio = isMobile ? 0.06 : 0.18
         const fontFamily = `"Space Mono", "JetBrains Mono", "SF Mono", Menlo, monospace`
         ctx.font = `500 ${fontSize}px ${fontFamily}`
         ctx.letterSpacing = `${Math.round(letterSpacingRatio * fontSize)}px`
 
         // Scale font down if the longest line overflows the canvas
-        const maxLineWidth = canvas.width * 0.9
+        const maxLineWidth = canvas.width * 0.95
         const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b), "")
         const measuredWidth = ctx.measureText(longestLine).width
         let effectiveFontSize = fontSize
