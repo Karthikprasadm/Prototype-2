@@ -134,7 +134,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
     const handleScroll = () => {
       if (startDispersed) return
       const doc = document.documentElement
-      const max = doc.scrollHeight - stableViewportH
+      const max = doc.scrollHeight - window.innerHeight
       scrollVelocity = Math.abs(window.scrollY - lastScrollY)
       // Cap scroll velocity on mobile so large flicks don't create jerky motion.
       if (isMobileViewport()) {
