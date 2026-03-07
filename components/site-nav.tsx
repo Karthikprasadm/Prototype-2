@@ -32,17 +32,41 @@ const searchEntries: SearchEntry[] = departments.flatMap((dept) => [
   })),
 ])
 
+function normalizeSearch(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "")
+}
+
 function getSearchResults(query: string): SearchEntry[] {
   const q = query.toLowerCase().trim()
   if (!q) return []
   return searchEntries
     .map((entry) => {
       const labelLow = entry.label.toLowerCase()
+      const labelNorm = normalizeSearch(entry.label)
+      const textLow = entry.searchText
+      const textNorm = normalizeSearch(entry.searchText)
+      const qNorm = normalizeSearch(q)
+      const tokens = q.split(/\s+/).filter(Boolean)
+
       let score = 0
-      if (labelLow === q) score = 100
-      else if (labelLow.startsWith(q)) score = 80
-      else if (labelLow.includes(q)) score = 60
-      else if (entry.searchText.includes(q)) score = 30
+
+      // Strong matches on the normalized label (handles spacing like "Robowars" vs "robo wars").
+      if (labelNorm === qNorm) score += 120
+      else if (labelNorm.startsWith(qNorm)) score += 100
+      else if (labelNorm.includes(qNorm)) score += 80
+      else if (textNorm.includes(qNorm)) score += 50
+
+      // Token-level partial matches ("robo" + "wars" should both push Robowars up).
+      for (const token of tokens) {
+        const t = token.toLowerCase()
+        if (!t) continue
+        if (labelLow.includes(t)) score += 18
+        else if (textLow.includes(t)) score += 10
+      }
+
+      // Slight boost for flagship events so marquee events rank higher when tied.
+      if (entry.isFlagship) score += 5
+
       return { entry, score }
     })
     .filter(({ score }) => score > 0)

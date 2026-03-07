@@ -44,7 +44,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       // Fewer fill particles when dispersed for performance; logo density is handled by main particles.
       const count = mobile
         ? Math.min(220, Math.floor((w * h) / (90 * 90)))
-        : Math.min(1000, Math.floor((w * h) / (55 * 55)))
+        : Math.min(800, Math.floor((w * h) / (60 * 60)))
       fillParticles = []
       for (let i = 0; i < count; i++) {
         fillParticles.push({
@@ -197,6 +197,11 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
           if (alpha > 40) {
             const isTextPixel = Math.abs(r - g) < 20 && Math.abs(r - b) < 20 && Math.abs(g - b) < 20 && r > 100
             const wf = isTextPixel ? 0.75 : 0
+
+            // On desktop, slightly thin out non-text particles so the swoosh feels lighter while text stays dense.
+            if (!isMobile && !isTextPixel && Math.random() < 0.25) {
+              continue
+            }
 
             const baseParticle = {
               x: Math.random() * canvas.width,
