@@ -69,7 +69,10 @@ export function RandomObjects({ zIndexClass = "z-0" }: { zIndexClass?: string })
     }, []);
 
     useEffect(() => {
-        const count = typeof window !== "undefined" && window.innerWidth < 768 ? 6 : 12;
+        const width = typeof window !== "undefined" ? window.innerWidth : 1024;
+        const isMobile = width < 768;
+        // Do not render any 3D objects on mobile devices
+        const count = isMobile ? 0 : 12;
         // Generate random objects after mount to avoid hydration mismatch
         const newObjects = Array.from({ length: count }).map((_, i) => {
             // Start objects outside the visible screen (edges are around +/- 25 for x, +/- 20 for y)

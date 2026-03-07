@@ -227,11 +227,11 @@ export const departments: DepartmentEvents[] = [
         teamSize: "2-4",
         duration: "6 hr",
         maxParticipants: 250,
-        prize: 12000,
+        prize: 30000,
         date: "8th April, 2026",
         description: "A flagship, hands-on innovation event where participants design, build, and demonstrate working hardware prototypes. Teams work over 6 hours using embedded systems, sensors, and electronic components. Four tracks: VLSI, Communication, Embedded/IoT, Robotics.",
         rules: "Each team must consist of 3-4 members. No participant can be part of more than one team. Some optimization will be asked for individual teams on spot. Round 1: prelims (online, abstract screening). Round 2: offline, selected teams present on the day.",
-        registrationFee: 250,
+        registrationFee: 500,
         contacts: [
           { name: "Himanshu R Rathod", phone: "9035373935" },
           { name: "Bhagyashree Verma", phone: "9741441806" },
