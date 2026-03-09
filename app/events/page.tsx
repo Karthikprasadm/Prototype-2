@@ -84,7 +84,7 @@ export default function EventsPage() {
                         3 tracks · 24 hr · ₹1,20,000+ prize pool
                       </p>
                       <p className="mt-3 text-sm text-white/55 leading-relaxed max-w-xl">
-                        Solaris X is a 24-hour engineering sprint focused on building scalable, real-world systems utilizing modern AI frameworks and cutting-edge development technologies. Under the theme &ldquo;Engineering the Systems of Tomorrow,&rdquo; participants will design, build, and deploy impactful solutions across three powerful tracks.
+                        Solaris X is a 24-hour engineering sprint focused on building scalable, real-world systems utilizing modern AI frameworks and cutting-edge development technologies. Under the theme <strong className="text-white/90 font-medium">&ldquo;Engineering the Systems of Tomorrow,&rdquo;</strong> participants will design, build, and deploy impactful solutions across three powerful tracks.
                       </p>
                       <p className="mt-3 text-sm text-white/50 transition-colors group-hover:text-white/70">
                         View details →
