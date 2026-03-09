@@ -40,6 +40,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       size: number; phase: number
       bgx: number; bgy: number
       r: number; g: number; b: number
+      rgbStr: string
     }
 
     type Shockwave = {
@@ -51,7 +52,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
     }
 
     /** Extra particles that fade in on scroll to fill the background when dispersed */
-    type FillParticle = { x: number; y: number; size: number; phase: number; r: number; g: number; b: number }
+    type FillParticle = { x: number; y: number; size: number; phase: number; r: number; g: number; b: number; rgbStr: string }
 
     let particles: Particle[] = []
     const shockwaves: Shockwave[] = []
@@ -67,14 +68,16 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
         : Math.min(550, Math.floor((w * h) / (68 * 68)))
       fillParticles = []
       for (let i = 0; i < count; i++) {
+        const r = 200 + Math.floor(Math.random() * 55)
+        const g = 180 + Math.floor(Math.random() * 75)
+        const b = 255
         fillParticles.push({
           x: Math.random() * w,
           y: Math.random() * h,
           size: Math.random() * 1.4 + 0.4,
           phase: Math.random() * Math.PI * 2,
-          r: 200 + Math.floor(Math.random() * 55),
-          g: 180 + Math.floor(Math.random() * 75),
-          b: 255,
+          r, g, b,
+          rgbStr: `rgb(${r},${g},${b})`
         })
       }
     }
@@ -218,6 +221,11 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
               continue
             }
 
+            const rVal = Math.round(Math.min(255, r + (255 - r) * wf))
+            const gVal = Math.round(Math.min(255, g + (255 - g) * wf))
+            const bVal = Math.round(Math.min(255, b + (255 - b) * wf))
+            const rgbStr = `rgb(${rVal},${gVal},${bVal})`
+
             const baseParticle = {
               x: Math.random() * canvas.width,
               y: Math.random() * canvas.height,
@@ -229,9 +237,10 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
               phase: Math.random() * Math.PI * 2,
               bgx: Math.random() * canvas.width,
               bgy: Math.random() * canvas.height,
-              r: Math.min(255, r + (255 - r) * wf),
-              g: Math.min(255, g + (255 - g) * wf),
-              b: Math.min(255, b + (255 - b) * wf),
+              r: rVal,
+              g: gVal,
+              b: bVal,
+              rgbStr
             }
             particles.push(baseParticle)
 
@@ -255,6 +264,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
                   r: baseParticle.r,
                   g: baseParticle.g,
                   b: baseParticle.b,
+                  rgbStr: baseParticle.rgbStr
                 })
               }
             }
@@ -376,9 +386,12 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       // On mobile, skip drawing them once we're mostly dispersed to keep things snappy.
       if (fillParticles.length > 0 && scrollProgress > 0 && (!isMobile || scrollProgress < 0.85)) {
         const fillAlpha = 0.05 + 0.2 * scrollProgress
-        for (const fp of fillParticles) {
-          const twinkle = 0.5 + 0.5 * Math.sin(time * 0.002 + fp.phase)
-          ctx.fillStyle = `rgba(${fp.r},${fp.g},${fp.b},${fillAlpha * twinkle})`
+        const time002 = time * 0.002
+        for (let i = 0; i < fillParticles.length; i++) {
+          const fp = fillParticles[i]
+          const twinkle = 0.5 + 0.5 * Math.sin(time002 + fp.phase)
+          ctx.globalAlpha = fillAlpha * twinkle
+          ctx.fillStyle = fp.rgbStr
           ctx.fillRect(fp.x, fp.y, fp.size, fp.size)
         }
       }
@@ -389,69 +402,77 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
         if (shockwaves[i].radius >= shockwaves[i].maxRadius) shockwaves.splice(i, 1)
       }
 
+      // Pre-compute constants for the particle loop to maximize rendering performance
+      const disperse = scrollProgress
+      const invDisperse = 1 - disperse
+      const baseSpring = isMobile ? 0.18 : 0.14
+      const dispersionBoost = invDisperse * (isMobile ? 0.14 : 0.09)
+      const scrollBoost = scrollVelocity * (isMobile ? 0.018 : 0.008)
+      const spring = baseSpring + dispersionBoost + scrollBoost
+      
+      const noiseStrength = isMobile ? 0.03 : 0.032
+      const maxSpeed = isMobile ? 20 : 24
+      const maxSpeedSq = maxSpeed * maxSpeed
+      const friction = isMobile ? 0.88 : 0.91
+      const readabilityDim = 1 - 0.45 * scrollProgress
+      
+      const time0015 = time * 0.0015
+      const time0013 = time * 0.0013
+      const time003 = time * 0.003
+
       for (let idx = 0; idx < particles.length; idx++) {
         const p = particles[idx]
-        const disperse = scrollProgress
-        const targetX = p.tx * (1 - disperse) + p.bgx * disperse
-        const targetY = p.ty * (1 - disperse) + p.bgy * disperse
+        const targetX = p.tx * invDisperse + p.bgx * disperse
+        const targetY = p.ty * invDisperse + p.bgy * disperse
 
         // Shockwave interactions
-        for (const sw of shockwaves) {
-          const dx = p.x - sw.x
-          const dy = p.y - sw.y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-          const distFromFront = Math.abs(dist - sw.radius)
-          if (distFromFront < 55 && dist > 0) {
-            const falloff = 1 - distFromFront / 55
-            const force = falloff * sw.strength / (dist * 0.08 + 1)
-            p.vx += (dx / dist) * force
-            p.vy += (dy / dist) * force
+        if (shockwaves.length > 0) {
+          for (let i = 0; i < shockwaves.length; i++) {
+            const sw = shockwaves[i]
+            const dx = p.x - sw.x
+            const dy = p.y - sw.y
+            const dist = Math.sqrt(dx * dx + dy * dy)
+            const distFromFront = Math.abs(dist - sw.radius)
+            if (distFromFront < 55 && dist > 0) {
+              const falloff = 1 - distFromFront / 55
+              const force = falloff * sw.strength / (dist * 0.08 + 1)
+              p.vx += (dx / dist) * force
+              p.vy += (dy / dist) * force
+            }
           }
         }
 
-        // Spring back toward logo or dispersed position. Softer desktop values = smoother, no lag.
-        const baseSpring = isMobile ? 0.18 : 0.14
-        const dispersionBoost = (1 - disperse) * (isMobile ? 0.14 : 0.09)
-        const scrollBoost = scrollVelocity * (isMobile ? 0.018 : 0.008)
-        const spring = baseSpring + dispersionBoost + scrollBoost
+        // Spring back toward logo or dispersed position.
         p.vx += (targetX - p.x) * spring
         p.vy += (targetY - p.y) * spring
 
-        // Gentle per-particle drift; lower on desktop for smoother motion.
-        const noiseStrength = isMobile ? 0.03 : 0.032
-        p.vx += Math.cos(time * 0.0015 + p.phase) * noiseStrength
-        p.vy += Math.sin(time * 0.0013 + p.phase) * noiseStrength
+        // Gentle per-particle drift.
+        p.vx += Math.cos(time0015 + p.phase) * noiseStrength
+        p.vy += Math.sin(time0013 + p.phase) * noiseStrength
 
-        // Velocity clamping and friction — higher friction on desktop for smooth easing.
-        const maxSpeed = isMobile ? 20 : 24
-        const speed = Math.hypot(p.vx, p.vy)
-        if (speed > maxSpeed) {
+        // Velocity clamping and friction
+        const speedSq = p.vx * p.vx + p.vy * p.vy
+        if (speedSq > maxSpeedSq) {
+          const speed = Math.sqrt(speedSq)
           const scale = maxSpeed / speed
           p.vx *= scale
           p.vy *= scale
         }
 
-        const friction = isMobile ? 0.88 : 0.91
         p.vx *= friction
         p.vy *= friction
 
         p.x += p.vx
         p.y += p.vy
 
-        const twinkle = 0.6 + 0.4 * Math.sin(time * 0.003 + p.phase)
-        const readabilityDim = 1 - 0.45 * scrollProgress
+        const twinkle = 0.6 + 0.4 * Math.sin(time003 + p.phase)
 
-        // When dispersed, draw fewer stars for performance; full density when logo is collected.
-        if (scrollProgress > 0.45) {
-          if (!isMobile && scrollProgress > 0.65 && idx % 3 !== 0) continue
-          if (!isMobile && scrollProgress <= 0.65 && idx % 2 === 1) continue
-          if (isMobile && scrollProgress > 0.7 && idx % 2 === 1) continue
-          if (isMobile && scrollProgress > 0.88 && idx % 3 !== 0) continue
-        }
-
-        ctx.fillStyle = `rgba(${Math.round(p.r)},${Math.round(p.g)},${Math.round(p.b)},${twinkle * readabilityDim})`
+        ctx.globalAlpha = twinkle * readabilityDim
+        ctx.fillStyle = p.rgbStr
         ctx.fillRect(p.x, p.y, p.size, p.size)
       }
+
+      ctx.globalAlpha = 1.0
 
       // Decay scroll velocity once per frame, not per particle.
       scrollVelocity *= isMobile ? 0.9 : 0.92
