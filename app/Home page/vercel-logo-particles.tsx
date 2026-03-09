@@ -216,9 +216,10 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
             const isTextPixel = Math.abs(r - g) < 20 && Math.abs(r - b) < 20 && Math.abs(g - b) < 20 && r > 100
             const wf = isTextPixel ? 0.75 : 0
 
-            // On desktop, thin out non-text particles for smoother performance; text stays dense for legibility.
-            if (!isMobile && !isTextPixel && Math.random() < 0.4) {
-              continue
+            // Thin out non-text particles for smoother performance; text stays dense for legibility.
+            if (!isTextPixel) {
+              if (!isMobile && Math.random() < 0.6) continue
+              if (isMobile && Math.random() < 0.3) continue
             }
 
             const rVal = Math.round(Math.min(255, r + (255 - r) * wf))

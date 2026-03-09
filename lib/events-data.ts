@@ -50,7 +50,7 @@ export const departments: DepartmentEvents[] = [
         prize: 5000,
         date: "8th April, 2026",
         description: "The Reverse image prompting event challenges teams to recreate AI-generated images by writing the exact prompts that could have produced them. Across three timed rounds of increasing difficulty, participants analyze style, composition, and details under strict generation limits, ending with a reveal of the original prompts and winners.",
-        rules: "Many Complex images given to the participants. (One per round). They get only 5 prompts to recreate the image. Each round consists of 5 mins to only write the prompt, 5 rounds. No photos to be taken of the image using cameras. For every round, one keyword is given to the participants and they must use it in their prompts in that round. Use only perchance tool to generate images (TENTATIVE). 1 laptop allowed.",
+        rules: "Many complex images given to the participants (one per round). They get only 5 prompts to recreate the image. Each round consists of 5 mins to only write the prompt, 5 rounds. No photos to be taken of the image using cameras. For every round, one keyword is given to the participants and they must use it in their prompts in that round. Use only perchance tool to generate images (TENTATIVE). 1 laptop allowed.",
         registrationFee: 60,
         contacts: [
           { name: "Nandan M Naik", phone: "8277202042" },
@@ -461,7 +461,7 @@ export const departments: DepartmentEvents[] = [
   {
     id: "mba",
     name: "MBA",
-    fullName: "Business Administration",
+    fullName: "Business Administration (MBA)",
     events: [
       {
         name: "BizNova",
@@ -538,6 +538,7 @@ export const departments: DepartmentEvents[] = [
           "Build multi-agent, context-aware AI systems that go beyond simple prompts and enable intelligent orchestration powered by MCP and tools.",
         rules:
           "Team size: 2–4 members. All core development must happen within the 24-hour Solaris X window. Frameworks and libraries are allowed; pre-built or previously shipped solutions are not. Teams must be present during evaluation. Team changes after the event begins are not permitted. No refunds in case of cancellation.",
+        registrationFee: 800,
         contacts: [
           { name: "Prarthana", phone: "9731424499" },
           { name: "Meghana", phone: "6364520130" },
@@ -557,6 +558,7 @@ export const departments: DepartmentEvents[] = [
           "Create tools that improve how developers build, debug, test, deploy, monitor, and scale software systems.",
         rules:
           "Team size: 2–4 members. All core development must happen within the 24-hour Solaris X window. Frameworks and libraries are allowed; pre-built or previously shipped solutions are not. Teams must be present during evaluation. Team changes after the event begins are not permitted. No refunds in case of cancellation.",
+        registrationFee: 800,
         contacts: [
           { name: "Prarthana", phone: "9731424499" },
           { name: "Meghana", phone: "6364520130" },
@@ -576,6 +578,7 @@ export const departments: DepartmentEvents[] = [
           "Design AI-driven systems that automate real workflows, reduce manual effort, and enable smarter operational processes.",
         rules:
           "Team size: 2–4 members. All core development must happen within the 24-hour Solaris X window. Frameworks and libraries are allowed; pre-built or previously shipped solutions are not. Teams must be present during evaluation. Team changes after the event begins are not permitted. No refunds in case of cancellation.",
+        registrationFee: 800,
         contacts: [
           { name: "Prarthana", phone: "9731424499" },
           { name: "Meghana", phone: "6364520130" },
