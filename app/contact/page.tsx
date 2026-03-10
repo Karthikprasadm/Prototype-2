@@ -81,6 +81,20 @@ const FAQ_ITEMS = [
 
 export default function ContactPage() {
   const [hasCopiedHelpdesk, setHasCopiedHelpdesk] = useState(false)
+  const [copiedPhone, setCopiedPhone] = useState<string | null>(null)
+
+  const copyToClipboard = (text: string, key?: string) => {
+    if (!navigator.clipboard) return
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        if (key) {
+          setCopiedPhone(key)
+          setTimeout(() => setCopiedPhone(null), 1500)
+        }
+      })
+      .catch(() => {})
+  }
 
   return (
     <main className="relative min-h-screen">
@@ -119,15 +133,9 @@ export default function ContactPage() {
                         type="button"
                         aria-label="Copy helpdesk email"
                         onClick={() => {
-                          if (navigator.clipboard) {
-                            navigator.clipboard
-                              .writeText("helpdesk.luminus@gmail.com")
-                              .then(() => {
-                                setHasCopiedHelpdesk(true)
-                                setTimeout(() => setHasCopiedHelpdesk(false), 1500)
-                              })
-                              .catch(() => {})
-                          }
+                          copyToClipboard("helpdesk.luminus@gmail.com")
+                          setHasCopiedHelpdesk(true)
+                          setTimeout(() => setHasCopiedHelpdesk(false), 1500)
                         }}
                         className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-0"
                       >
@@ -139,6 +147,85 @@ export default function ContactPage() {
                         </span>
                       )}
                     </div>
+                  </li>
+                  <li>
+                    <span className="text-white/45 text-xs uppercase tracking-widest block mb-1">
+                      Mobile
+                    </span>
+                    <ul className="space-y-1.5">
+                      <li className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <span className="text-white/80">Tanisha V Shetty</span>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href="tel:+918088586578"
+                            className="text-white hover:text-white/80 underline underline-offset-2 transition-colors"
+                          >
+                            +91 80885 86578
+                          </a>
+                          <button
+                            type="button"
+                            aria-label="Copy Tanisha V Shetty phone number"
+                            onClick={() => copyToClipboard("+918088586578", "tanisha")}
+                            className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-0"
+                          >
+                            <Copy className="h-3 w-3" />
+                          </button>
+                          {copiedPhone === "tanisha" && (
+                            <span className="text-[10px] uppercase tracking-[0.18em] text-white/55">
+                              Copied!
+                            </span>
+                          )}
+                        </div>
+                      </li>
+                      <li className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <span className="text-white/80">Syed Javed</span>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href="tel:+917899278471"
+                            className="text-white hover:text-white/80 underline underline-offset-2 transition-colors"
+                          >
+                            +91 78992 78471
+                          </a>
+                          <button
+                            type="button"
+                            aria-label="Copy Syed Javed phone number"
+                            onClick={() => copyToClipboard("+917899278471", "syed")}
+                            className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-0"
+                          >
+                            <Copy className="h-3 w-3" />
+                          </button>
+                          {copiedPhone === "syed" && (
+                            <span className="text-[10px] uppercase tracking-[0.18em] text-white/55">
+                              Copied!
+                            </span>
+                          )}
+                        </div>
+                      </li>
+                      <li className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <span className="text-white/80">Koushik V</span>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href="tel:+919353195315"
+                            className="text-white hover:text-white/80 underline underline-offset-2 transition-colors"
+                          >
+                            +91 93531 95315
+                          </a>
+                          <button
+                            type="button"
+                            aria-label="Copy Koushik V phone number"
+                            onClick={() => copyToClipboard("+919353195315", "koushik")}
+                            className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-0"
+                          >
+                            <Copy className="h-3 w-3" />
+                          </button>
+                          {copiedPhone === "koushik" && (
+                            <span className="text-[10px] uppercase tracking-[0.18em] text-white/55">
+                              Copied!
+                            </span>
+                          )}
+                        </div>
+                      </li>
+                    </ul>
                   </li>
                   <li>
                     <span className="text-white/45 text-xs uppercase tracking-widest block mb-1">Venue</span>
