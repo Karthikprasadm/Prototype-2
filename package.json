@@ -19,9 +19,8 @@
     "lib": "lib"
   },
   "scripts": {
-    "clean:next": "powershell -NoProfile -Command \"if (Test-Path .next) { attrib -R -S -H .next /S /D | Out-Null; Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue }\"",
-    "stop:devports": "powershell -NoProfile -Command \"$pids = @(Get-NetTCPConnection -State Listen -LocalPort 3000,3001 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | Sort-Object -Unique); foreach ($procId in $pids) { try { Stop-Process -Id $procId -Force -ErrorAction SilentlyContinue } catch {} }\"",
-    "prebuild": "npm run stop:devports && npm run clean:next",
+    "clean:next:local": "powershell -NoProfile -Command \"if (Test-Path .next) { attrib -R -S -H .next /S /D | Out-Null; Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue }\"",
+    "stop:devports:local": "powershell -NoProfile -Command \"$pids = @(Get-NetTCPConnection -State Listen -LocalPort 3000,3001 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | Sort-Object -Unique); foreach ($procId in $pids) { try { Stop-Process -Id $procId -Force -ErrorAction SilentlyContinue } catch {} }\"",
     "build": "next build",
     "analyze": "cross-env ANALYZE=true next build",
     "dev": "next dev",
