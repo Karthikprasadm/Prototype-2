@@ -168,21 +168,21 @@ export default function ContactPage() {
 
           {/* FAQ */}
           <section aria-label="Frequently asked questions">
-            <h2 className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/40 mb-4">
+            <h2 className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/40 mb-6 px-1">
               Frequently asked questions
             </h2>
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.06] backdrop-blur-2xl overflow-hidden">
+            <div className="rounded-3xl border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.06] transition-colors duration-500 backdrop-blur-2xl px-6 sm:px-10 overflow-hidden shadow-2xl">
               <Accordion type="single" collapsible className="w-full">
                 {FAQ_ITEMS.map((item, i) => (
                   <AccordionItem
                     key={i}
                     value={`faq-${i}`}
-                    className="border-none px-5 sm:px-6"
+                    className="border-b border-white/[0.06] last:border-none group"
                   >
-                    <AccordionTrigger className="text-left text-white/90 hover:text-white py-4 hover:no-underline">
+                    <AccordionTrigger className="text-left text-white/70 hover:text-white py-7 hover:no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] font-medium text-[15px] sm:text-[17px] tracking-tight [&[data-state=open]]:text-white [&>svg]:text-white/30 [&>svg]:hover:text-white/70 [&[data-state=open]>svg]:text-white">
                       {item.q}
                     </AccordionTrigger>
-                    <AccordionContent className="text-white/55 text-sm pb-4">
+                    <AccordionContent className="text-white/55 text-[14px] sm:text-[15px] pb-7 leading-relaxed pr-8 sm:pr-12">
                       {item.a}
                     </AccordionContent>
                   </AccordionItem>
