@@ -5,51 +5,14 @@ import { motion } from "framer-motion"
 import { Calendar, Clock } from "lucide-react"
 import dynamic from "next/dynamic"
 import { GlowEffect } from "@/components/ui/glow-effect"
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
+import { getScheduleForDay } from "@/lib/schedule-data"
 
 const LuminusParticles = dynamic(
   () => import("../Home page/vercel-logo-particles").then((m) => m.default),
   { ssr: false }
 )
-
-type Event = {
-  name: string
-  start: string
-  end: string
-  color: string
-  glowColor: string
-}
-
-const day1: Event[] = [
-  { name: "KILL SWITCH PROTOCOL", start: "11:00", end: "15:00", color: "#eab308", glowColor: "#fbbf24" },
-  { name: "ROBO WARS", start: "11:00", end: "16:00", color: "#ef4444", glowColor: "#f87171" },
-  { name: "IOT NEXUS", start: "11:00", end: "16:00", color: "#22d3ee", glowColor: "#67e8f9" },
-  { name: "ELECTRO QUIZ- CIRCUITRIX", start: "11:00", end: "16:00", color: "#3b82f6", glowColor: "#60a5fa" },
-  { name: "CODE CONUNDRUM", start: "11:00", end: "13:00", color: "#0ea5e9", glowColor: "#38bdf8" },
-  { name: "VERSION CONTROL WARS", start: "13:30", end: "16:00", color: "#0ea5e9", glowColor: "#38bdf8" },
-  { name: "ESCAPE AND EXPLOIT", start: "11:00", end: "16:00", color: "#22c55e", glowColor: "#4ade80" },
-  { name: "INNOVATRIUM", start: "11:00", end: "16:00", color: "#67e8f9", glowColor: "#a5f3fc" },
-  { name: "VALORANT", start: "11:00", end: "16:00", color: "#f43f5e", glowColor: "#fb7185" },
-  { name: "GRAND HACKATHON", start: "12:00", end: "16:00", color: "#3b82f6", glowColor: "#60a5fa" },
-  { name: "BRIDGE IT", start: "11:00", end: "16:00", color: "#6b7280", glowColor: "#9ca3af" }
-]
-
-const day2: Event[] = [
-  { name: "GRAND HACKATHON", start: "09:00", end: "12:30", color: "#3b82f6", glowColor: "#60a5fa" },
-  { name: "DATA ROYALE", start: "09:00", end: "15:00", color: "#facc15", glowColor: "#fde047" },
-  { name: "RC CAR RACING", start: "09:00", end: "15:00", color: "#ef4444", glowColor: "#f87171" },
-  { name: "ELECTRAFORGE", start: "09:00", end: "15:00", color: "#60a5fa", glowColor: "#93c5fd" },
-  { name: "IDEATHON ARENA", start: "09:00", end: "15:00", color: "#eab308", glowColor: "#fbbf24" },
-  { name: "TURING TEST", start: "10:30", end: "12:00", color: "#fde047", glowColor: "#fef08a" },
-  { name: "TECH ESCAPE QUEST", start: "09:00", end: "11:30", color: "#0ea5e9", glowColor: "#38bdf8" },
-  { name: "ZERO DAY ARENA", start: "09:00", end: "15:00", color: "#22d3ee", glowColor: "#67e8f9" },
-  { name: "DESIGN, DECIDE, DOMINATE", start: "09:00", end: "15:00", color: "#9ca3af", glowColor: "#d1d5db" },
-  { name: "SDG: DATA TO DASHBOARD", start: "09:00", end: "12:00", color: "#f97316", glowColor: "#fb923c" },
-  { name: "BIZNOVA", start: "12:00", end: "13:00", color: "#dc2626", glowColor: "#ef4444" },
-  { name: "EMBEDDED ESCAPE ROOM", start: "09:00", end: "12:00", color: "#22d3ee", glowColor: "#67e8f9" },
-  { name: "BUG BUSTER", start: "13:30", end: "15:00", color: "#22d3ee", glowColor: "#67e8f9" },
-  { name: "VALORANT", start: "09:00", end: "14:00", color: "#f43f5e", glowColor: "#fb7185" },
-  { name: "BGMI", start: "09:00", end: "15:00", color: "#3b82f6", glowColor: "#60a5fa" }
-]
 
 const timeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number)
@@ -75,9 +38,11 @@ function isDarkBar(color: string): boolean {
   return hexLuminance(color) < DARK_LUMINANCE
 }
 
-export default function SchedulePage() {
+function SchedulePageInner() {
+  const searchParams = useSearchParams()
   const [day, setDay] = React.useState(1)
-  const events = day === 1 ? day1 : day2
+  const [focusedId, setFocusedId] = React.useState<string | null>(null)
+  const events = getScheduleForDay(day === 1 ? 1 : 2)
   const startHour = day === 1 ? 11 : 9
   const endHour = day === 1 ? 16 : 15
   const timeSlots = Array.from({ length: (endHour - startHour) * 2 + 1 }, (_, i) => {
@@ -85,6 +50,30 @@ export default function SchedulePage() {
     const minute = i % 2 === 0 ? "00" : "30"
     return `${hour}:${minute}`
   })
+
+  React.useEffect(() => {
+    const dayParam = searchParams.get("day")
+    const focus = searchParams.get("focus")
+    const parsedDay = dayParam === "2" ? 2 : dayParam === "1" ? 1 : null
+
+    if (parsedDay && parsedDay !== day) setDay(parsedDay)
+    setFocusedId(focus)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
+  React.useEffect(() => {
+    if (!focusedId) return
+    const el = document.getElementById(`schedule-${focusedId}`)
+    if (!el) return
+
+    // Allow layout to settle before scrolling.
+    const t = window.setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "center" })
+      window.setTimeout(() => setFocusedId(null), 2200)
+    }, 120)
+
+    return () => window.clearTimeout(t)
+  }, [focusedId, day])
 
   return (
     <main className="relative min-h-screen bg-black overflow-x-hidden">
@@ -177,19 +166,39 @@ export default function SchedulePage() {
 
                 return (
                   <motion.div
-                    key={index}
+                    key={event.id}
+                    id={`schedule-${event.id}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.03 }}
                     className="group relative z-0"
                   >
+                    {/* Focus ring (when navigated from an event) */}
+                    <div
+                      aria-hidden
+                      className={
+                        focusedId === event.id
+                          ? "pointer-events-none absolute -inset-2 rounded-[28px] border border-white/15 shadow-[0_0_0_1px_rgba(59,130,246,0.22),0_0_36px_rgba(59,130,246,0.18)]"
+                          : "hidden"
+                      }
+                    />
+
                     {/* Desktop View */}
                     <div className="hidden md:flex items-center">
                       {/* Event Name */}
                       <div className="w-56 flex-shrink-0 pr-4">
-                        <p className="text-[14px] font-medium text-white/90 group-hover:text-white transition-colors tracking-tight">
-                          {event.name}
-                        </p>
+                        {event.href ? (
+                          <Link
+                            href={event.href}
+                            className="text-[14px] font-medium text-white/90 hover:text-white transition-colors tracking-tight focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-md"
+                          >
+                            {event.name}
+                          </Link>
+                        ) : (
+                          <p className="text-[14px] font-medium text-white/90 group-hover:text-white transition-colors tracking-tight">
+                            {event.name}
+                          </p>
+                        )}
                       </div>
 
                       {/* Timeline Bar — glass + event color tint */}
@@ -204,21 +213,40 @@ export default function SchedulePage() {
                               duration={5}
                               className="rounded-2xl opacity-0 group-hover:opacity-35 transition-opacity duration-300"
                             />
-                            <div
-                              className="relative h-full rounded-2xl border border-white/[0.08] backdrop-blur-xl transition-all duration-300 group-hover:scale-[1.01] group-hover:border-white/[0.12] flex items-center px-4"
-                              style={{
-                                backgroundColor: barBackground(event.color),
-                                ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
-                                boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 16px rgba(0,0,0,0.25)"
-                              }}
-                            >
-                              <div className="flex items-center gap-2 text-white text-xs font-medium">
-                                <Clock className="w-3.5 h-3.5 opacity-80" style={{ color: event.color }} />
-                                <span className="text-white/90">
-                                  {event.start} – {event.end}
-                                </span>
+                            {event.href ? (
+                              <Link
+                                href={event.href}
+                                className="relative h-full rounded-2xl border border-white/[0.08] backdrop-blur-xl transition-all duration-300 group-hover:scale-[1.01] group-hover:border-white/[0.12] flex items-center px-4 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                                style={{
+                                  backgroundColor: barBackground(event.color),
+                                  ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
+                                  boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 16px rgba(0,0,0,0.25)",
+                                }}
+                              >
+                                <div className="flex items-center gap-2 text-white text-xs font-medium">
+                                  <Clock className="w-3.5 h-3.5 opacity-80" style={{ color: event.color }} />
+                                  <span className="text-white/90">
+                                    {event.start} – {event.end}
+                                  </span>
+                                </div>
+                              </Link>
+                            ) : (
+                              <div
+                                className="relative h-full rounded-2xl border border-white/[0.08] backdrop-blur-xl transition-all duration-300 group-hover:scale-[1.01] group-hover:border-white/[0.12] flex items-center px-4"
+                                style={{
+                                  backgroundColor: barBackground(event.color),
+                                  ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
+                                  boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 16px rgba(0,0,0,0.25)",
+                                }}
+                              >
+                                <div className="flex items-center gap-2 text-white text-xs font-medium">
+                                  <Clock className="w-3.5 h-3.5 opacity-80" style={{ color: event.color }} />
+                                  <span className="text-white/90">
+                                    {event.start} – {event.end}
+                                  </span>
+                                </div>
                               </div>
-                            </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -235,22 +263,42 @@ export default function SchedulePage() {
                           duration={5}
                           className="rounded-3xl opacity-25"
                         />
-                        <div
-                          className="relative rounded-3xl border border-white/[0.06] backdrop-blur-xl p-4"
-                          style={{
-                            backgroundColor: barBackground(event.color),
-                            ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
-                            boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.3)"
-                          }}
-                        >
-                          <p className="text-sm font-medium text-white/95 tracking-tight">
-                            {event.name}
-                          </p>
-                          <div className="mt-2 flex items-center gap-2 text-xs text-white/60">
-                            <Clock className="w-3.5 h-3.5 shrink-0 opacity-80" style={{ color: event.color }} />
-                            <span>{event.start} – {event.end}</span>
+                        {event.href ? (
+                          <Link
+                            href={event.href}
+                            className="relative block rounded-3xl border border-white/[0.06] backdrop-blur-xl p-4 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                            style={{
+                              backgroundColor: barBackground(event.color),
+                              ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
+                              boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.3)",
+                            }}
+                          >
+                            <p className="text-sm font-medium text-white/95 tracking-tight">
+                              {event.name}
+                            </p>
+                            <div className="mt-2 flex items-center gap-2 text-xs text-white/60">
+                              <Clock className="w-3.5 h-3.5 shrink-0 opacity-80" style={{ color: event.color }} />
+                              <span>{event.start} – {event.end}</span>
+                            </div>
+                          </Link>
+                        ) : (
+                          <div
+                            className="relative rounded-3xl border border-white/[0.06] backdrop-blur-xl p-4"
+                            style={{
+                              backgroundColor: barBackground(event.color),
+                              ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
+                              boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.3)",
+                            }}
+                          >
+                            <p className="text-sm font-medium text-white/95 tracking-tight">
+                              {event.name}
+                            </p>
+                            <div className="mt-2 flex items-center gap-2 text-xs text-white/60">
+                              <Clock className="w-3.5 h-3.5 shrink-0 opacity-80" style={{ color: event.color }} />
+                              <span>{event.start} – {event.end}</span>
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -261,5 +309,13 @@ export default function SchedulePage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function SchedulePage() {
+  return (
+    <React.Suspense fallback={<main className="relative min-h-screen bg-black" />}>
+      <SchedulePageInner />
+    </React.Suspense>
   )
 }

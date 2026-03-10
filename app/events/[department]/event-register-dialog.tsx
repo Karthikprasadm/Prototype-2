@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useToast } from "@/hooks/use-toast"
 
 interface EventRegisterDialogProps {
   departmentId: string
@@ -71,6 +72,7 @@ export function EventRegisterDialog({
   const [open, setOpen] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { toast } = useToast()
   const { min, max } = useMemo(() => parseTeamSize(teamSize), [teamSize])
   const [participantSlots, setParticipantSlots] = useState<number[]>(
     Array.from({ length: min }, (_, i) => i + 1)
@@ -83,14 +85,6 @@ export function EventRegisterDialog({
       setCollegeValues({})
     }
   }, [min, open])
-
-  if (!registrationOpen) {
-    return (
-      <div className="mt-1 inline-flex items-center rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[11px] font-medium tracking-[0.18em] uppercase text-white/60">
-        Registrations closed
-      </div>
-    )
-  }
 
   return (
     <Dialog
@@ -106,9 +100,10 @@ export function EventRegisterDialog({
       <DialogTrigger asChild>
         <Button
           size="sm"
-          className="mt-1 rounded-full bg-amber-400 text-black shadow-[0_10px_30px_rgba(251,191,36,0.28)] transition-all hover:-translate-y-0.5 hover:bg-amber-300"
+          disabled={!registrationOpen}
+          className="mt-1 rounded-full bg-amber-400 text-black shadow-[0_10px_30px_rgba(251,191,36,0.28)] transition-all hover:-translate-y-0.5 hover:bg-amber-300 disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:bg-amber-400"
         >
-          Register
+          {registrationOpen ? "Register" : "Registrations closed"}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl bg-[#020202]/95 text-white border-0 rounded-3xl shadow-[0_30px_90px_rgba(0,0,0,0.9)] backdrop-blur-2xl p-0 overflow-hidden">
@@ -205,6 +200,10 @@ export function EventRegisterDialog({
                       ? responseBody.error
                       : "Unable to submit registration right now. Please try again."
                   setErrorMessage(message)
+                  toast({
+                    title: "Registration failed",
+                    description: message,
+                  })
                   return
                 }
 
@@ -212,15 +211,29 @@ export function EventRegisterDialog({
                 setCollegeValues({})
                 setParticipantSlots(Array.from({ length: min }, (_, i) => i + 1))
                 setOpen(false)
+                toast({
+                  title: "Registration submitted",
+                  description: "Redirecting to payment...",
+                })
                 window.location.href = "https://payments.billdesk.com/bdcollect/bd/rnsiotec/6492"
               } catch {
-                setErrorMessage("Unable to submit registration right now. Please try again.")
+                const message = "Unable to submit registration right now. Please try again."
+                setErrorMessage(message)
+                toast({
+                  title: "Registration failed",
+                  description: message,
+                })
               } finally {
                 setIsSubmitting(false)
               }
             }}
             className="space-y-5 text-sm px-6 pb-5 pt-4"
           >
+            {!registrationOpen && (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/70">
+                Registrations for this event are currently closed.
+              </div>
+            )}
             <div className="space-y-3 rounded-2xl border-0 bg-gradient-to-b from-[#151515] to-[#0c0c0c] px-4 py-4">
               <p className="text-[11px] uppercase tracking-[0.18em] text-white/50 font-medium">
                 Participants

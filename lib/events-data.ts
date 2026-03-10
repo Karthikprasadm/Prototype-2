@@ -50,7 +50,7 @@ export const departments: DepartmentEvents[] = [
         prize: 5000,
         date: "8th April, 2026",
         description: "A fast-paced challenge to turn complex visuals into precise prompts.",
-        rules: "Many complex images given to the participants (one per round). They get only 5 prompts to recreate the image. Each round consists of 5 mins to only write the prompt, 5 rounds. No photos to be taken of the image using cameras. For every round, one keyword is given to the participants and they must use it in their prompts in that round. Use only perchance tool to generate images (TENTATIVE). 1 laptop allowed.",
+        rules: "Many complex images are given to the participants (one per round). They get only 5 prompts to recreate the image. Each round consists of 5 minutes to write the prompt (5 rounds). No photos may be taken of the image using cameras. For every round, one keyword is given to the participants and they must use it in their prompts in that round. Use only the Perchance tool to generate images (tentative). 1 laptop allowed.",
         registrationFee: 60,
         contacts: [
           { name: "Nandan M Naik", phone: "8277202042" },
@@ -58,7 +58,7 @@ export const departments: DepartmentEvents[] = [
         ],
       },
       {
-        name: "Turing test",
+        name: "Turing Test",
         type: "Minor",
         teamSize: "2",
         duration: "1 hr",
@@ -66,7 +66,7 @@ export const departments: DepartmentEvents[] = [
         prize: 5000,
         date: "9th April, 2026",
         description: "An interactive challenge to spot whether code and pull requests are human-written or AI-generated, combining a rapid quiz with a detailed review round.",
-        rules: "The event will be conducted in 2 phases. No use of AI tools, internet, or external assistance. Phones allowed only for answering Kahoot (Phase 1). Only provided material can be used for evaluation. Organizer decisions are final in case of disputes.",
+        rules: "The event will be conducted in two phases. No use of AI tools, internet, or external assistance. Phones are allowed only for answering Kahoot (Phase 1). Only the provided material may be used for evaluation. Organizers' decisions are final in case of disputes.",
         registrationFee: 100,
         contacts: [
           { name: "Noti Gayatri", phone: "9964848456" },
@@ -89,7 +89,7 @@ export const departments: DepartmentEvents[] = [
         prize: 5000,
         date: "8th April, 2026",
         description: "A fast-paced team challenge where participants solve puzzles and decode clues through strategy and teamwork.",
-        rules: "All rounds must be solved sequentially. Each correct solution unlocks the next stage. Only permitted resources announced by organizers may be used. Cheating, plagiarism, answer sharing, or interference will lead to disqualification. Answers must be submitted through the official platform provided. The event will run within a fixed time limit. Organizer and judge decisions are final.",
+        rules: "All rounds must be solved sequentially. Each correct solution unlocks the next stage. Only permitted resources announced by organizers may be used. Cheating, plagiarism, answer sharing, or interference will lead to disqualification. Answers must be submitted through the official platform provided. The event will run within a fixed time limit. Organizers' and judges' decisions are final.",
         registrationFee: 150,
         contacts: [
           { name: "Chaitanya M", phone: "7019316251" },
@@ -120,7 +120,7 @@ export const departments: DepartmentEvents[] = [
     fullName: "Computer Science",
     events: [
       {
-        name: "Code conundrum",
+        name: "Code Conundrum",
         type: "Minor",
         teamSize: "2",
         duration: "1 hr 30 min",
@@ -128,7 +128,7 @@ export const departments: DepartmentEvents[] = [
         prize: 5000,
         date: "8th April, 2026",
         description: "A fast-paced coding challenge where teams match problem statements to the correct code snippets under time pressure.",
-        rules: "No AI tools are allowed. Accuracy and time will determine rankings. Tie-breakers may be applied if required. Participants must follow all instructions given by organizers.",
+        rules: "No AI tools are allowed. Accuracy and time will determine rankings. Tie-breakers may be applied if required. Participants must follow all instructions given by the organizers.",
         registrationFee: 150,
         contacts: [
           { name: "Pranava G Rao", phone: "8310334784" },
@@ -144,7 +144,7 @@ export const departments: DepartmentEvents[] = [
         prize: 5000,
         date: "9th April, 2026",
         description: "A high-intensity challenge where teams solve logic, debugging, and puzzle tasks to unlock encrypted clues and form a master password.",
-        rules: "Mobile phones and internet usage are strictly prohibited unless explicitly allowed. External communication during the event is not permitted. Teams must complete all rounds sequentially. Any malpractice will lead to immediate disqualification. Tie-breaking will be based on completion time of the final round. Judges' decisions are final.",
+        rules: "Mobile phones and internet usage are strictly prohibited unless explicitly allowed. External communication during the event is not permitted. Teams must complete all rounds sequentially. Any malpractice will lead to immediate disqualification. Tie-breaking will be based on the completion time of the final round. Judges' decisions are final.",
         registrationFee: 200,
         contacts: [
           { name: "Pruthvi Raj R", phone: "6360517123" },
@@ -246,7 +246,7 @@ export const departments: DepartmentEvents[] = [
         ],
       },
       {
-        name: "Embedded escape room",
+        name: "Embedded Escape Room",
         type: "Minor",
         teamSize: "2-3",
         duration: "3 hr",
@@ -254,7 +254,7 @@ export const departments: DepartmentEvents[] = [
         prize: 5000,
         date: "9th April, 2026",
         description: "An interactive embedded-systems challenge where teams debug code, analyze circuits, and solve puzzles involving microcontrollers and electronics within a time limit.",
-        rules: "Team Structure: Teams must consist of 2-3 members. No team changes after registration. Gameplay rules: Challenges must be solved in sequence. Internet access and external communication are strictly prohibited. Only materials provided by organizers may be used. Hints & Penalties: Teams may request hints. Each hint carries a time penalty. Excessive hint usage may affect ranking.",
+        rules: "Team Structure: Teams must consist of 2-3 members. No team changes after registration. Gameplay rules: Challenges must be solved in sequence. Internet access and external communication are strictly prohibited. Only materials provided by the organizers may be used. Hints & Penalties: Teams may request hints. Each hint carries a time penalty. Excessive hint usage may affect ranking.",
         registrationFee: 100,
         contacts: [
           { name: "Aishwarya S N", phone: "7892980744" },
@@ -270,7 +270,7 @@ export const departments: DepartmentEvents[] = [
         prize: 5000,
         date: "9th April, 2026",
         description: "A competitive debugging challenge to identify and fix errors in embedded programs and electronic logic, testing programming and microcontroller concepts.",
-        rules: "Participation: Individual or team of 1–2 members allowed. No team changes. Allowed Materials: No internet access. No external reference materials. Only IDE/system provided by organizers. Time Rules: Strict adherence to time limits.",
+        rules: "Participation: Individual or team of 1–2 members allowed. No team changes. Allowed Materials: No internet access. No external reference materials. Only IDE/system provided by the organizers. Time Rules: Strict adherence to time limits.",
         registrationFee: 100,
         contacts: [
           { name: "Vishnu Kaushik S", phone: "9663038822" },
@@ -293,7 +293,7 @@ export const departments: DepartmentEvents[] = [
         prize: 5000,
         date: "8th April, 2026",
         description: "A technical event with a quiz and practical circuitry challenge for Electrical and Electronics students.",
-        rules: "No electronic gadgets allowed during quiz (except if online quiz mode is officially permitted). Negative marking will be informed before the quiz based on the number of registration. Only qualified teams can participate in the circuitry round. Safety precautions must be followed during the circuit implementation. The judge's decision will be final and binding.",
+        rules: "No electronic gadgets are allowed during the quiz (except if online quiz mode is officially permitted). Negative marking will be informed before the quiz based on the number of registrations. Only qualified teams can participate in the circuitry round. Safety precautions must be followed during the circuit implementation. Judges' decisions are final and binding.",
         registrationFee: 200,
         contacts: [
           { name: "Rajesh R", phone: "9980620056" },
@@ -402,7 +402,7 @@ export const departments: DepartmentEvents[] = [
         ],
       },
       {
-        name: "Robowars",
+        name: "Robo Wars",
         type: "Flagship",
         teamSize: "3-5",
         duration: "6 hr",
@@ -472,7 +472,7 @@ export const departments: DepartmentEvents[] = [
         prize: 10000,
         date: "9th April, 2026",
         description: "A fast-paced business quiz on startups, finance, and strategy with live answer reveals, audience engagement, and real-world decision-making rounds.",
-        rules: "The quiz format and rounds will be explained at the beginning of the event. Participants are expected to report to the venue at least 15–20 minutes prior to the start of the event. Late entries may not be entertained. The decision of the Quiz Master and organizing committee will be final and binding. Any form of malpractice, including use of mobile phones or unfair means, will lead to immediate disqualification.",
+        rules: "The quiz format and rounds will be explained at the beginning of the event. Participants are expected to report to the venue at least 15–20 minutes prior to the start of the event. Late entries may not be entertained. The decisions of the Quiz Master and organizing committee are final and binding. Any form of malpractice, including use of mobile phones or unfair means, will lead to immediate disqualification.",
         registrationFee: 200,
         contacts: [
           { name: "Pratik Vijay", phone: "9380667543" },

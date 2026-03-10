@@ -270,7 +270,7 @@ export default function ContactPage() {
                     value={`faq-${i}`}
                     className="border-b border-white/[0.06] last:border-none group"
                   >
-                    <AccordionTrigger className="text-left text-white/70 hover:text-white py-5 hover:no-underline transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] font-medium text-[15px] sm:text-[16px] tracking-tight [&[data-state=open]]:text-white [&>svg]:text-white/30 [&>svg]:hover:text-white/70 [&[data-state=open]>svg]:text-white">
+                    <AccordionTrigger className="text-left text-white/70 hover:text-white py-5 hover:no-underline transition-all duration-500 ease-expo font-medium text-[15px] sm:text-[16px] tracking-tight [&[data-state=open]]:text-white [&>svg]:text-white/30 [&>svg]:hover:text-white/70 [&[data-state=open]>svg]:text-white">
                       {item.q}
                     </AccordionTrigger>
                     <AccordionContent className="text-white/55 text-[14px] sm:text-[15px] pb-5 leading-relaxed pr-6 sm:pr-10">
