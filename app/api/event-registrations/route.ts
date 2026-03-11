@@ -42,7 +42,8 @@ export async function POST(request: Request) {
     const payload = parsed.data
 
     // Server-side guard: ensure the event exists and is open for registration,
-    // regardless of what the client sends.
+    // and derive canonical properties (like registration fee) from our
+    // authoritative events data instead of trusting the client.
     const [eventDeptId, indexStr] = payload.eventKey.split(":")
     const eventIndex = Number.parseInt(indexStr ?? "", 10) - 1
     const sourceDept = eventDeptId ? getDepartmentById(eventDeptId) : undefined
@@ -64,13 +65,19 @@ export async function POST(request: Request) {
 
     const supabase = getSupabaseAdminClient()
 
+    // Use the registration fee defined in events-data so rows in Supabase
+    // always match the latest event configuration (for Grand Hackathon tracks
+    // and all other events). Fall back to null if none is configured.
+    const canonicalRegistrationFee =
+      typeof sourceEvent.registrationFee === "number" ? sourceEvent.registrationFee : null
+
     const { error } = await supabase.from("event_registrations").insert({
       department_id: payload.departmentId,
       department_name: payload.departmentName,
       event_key: payload.eventKey,
       event_name: payload.eventName,
       team_size: payload.teamSize,
-      registration_fee: payload.registrationFee ?? null,
+      registration_fee: canonicalRegistrationFee,
       participants: payload.participants,
       submitted_at: new Date().toISOString(),
     })

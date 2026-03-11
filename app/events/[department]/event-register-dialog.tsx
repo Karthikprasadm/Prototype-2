@@ -215,10 +215,48 @@ export function EventRegisterDialog({
 
                 if (!response.ok) {
                   const responseBody = await response.json().catch(() => null)
-                  const message =
+
+                  // Try to surface a specific field error from Zod, e.g. which
+                  // participant / field failed validation, instead of a generic payload error.
+                  let message: string =
                     typeof responseBody?.error === "string"
                       ? responseBody.error
                       : "Unable to submit registration right now. Please try again."
+
+                  const fieldErrors = (responseBody as any)?.details?.fieldErrors as
+                    | Record<string, string[]>
+                    | undefined
+
+                  if (fieldErrors) {
+                    const firstWithMessage = Object.entries(fieldErrors).find(
+                      ([, msgs]) => Array.isArray(msgs) && msgs.length > 0,
+                    )
+
+                    if (firstWithMessage) {
+                      const [rawPath, msgs] = firstWithMessage
+                      const rawReason = msgs[0]
+
+                      // Zod paths for participants look like "participants.1.email"
+                      const match = rawPath.match(/^participants\.(\d+)\.(.+)$/)
+                      if (match) {
+                        const participantNumber = Number.parseInt(match[1] ?? "0", 10) + 1
+                        const fieldKey = match[2]
+                        const fieldLabelMap: Record<string, string> = {
+                          name: "name",
+                          collegeName: "college name",
+                          studentId: "USN / student ID",
+                          email: "email",
+                          phoneNumber: "phone number",
+                          track: "track",
+                        }
+                        const fieldLabel = fieldLabelMap[fieldKey] ?? fieldKey
+                        message = `Participant ${participantNumber}: ${fieldLabel} ${rawReason}`
+                      } else if (rawPath && rawReason) {
+                        message = `${rawPath}: ${rawReason}`
+                      }
+                    }
+                  }
+
                   setErrorMessage(message)
                   toast({
                     title: "Registration failed",
