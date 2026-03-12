@@ -34,6 +34,10 @@ const FAQ_ITEMS = [
     a: "Yes, participants can register for multiple events as long as the event timings do not clash.",
   },
   {
+    q: "Are participants registered for the Grand Hackathon (SolarisX) permitted to participate in other events?",
+    a: "Yes. Participants registered for the Grand Hackathon (SolarisX) may temporarily leave the hackathon venue to participate in other events, provided that the duration of such events does not exceed 4 hours.",
+  },
+  {
     q: "Is there a limit on team size?",
     a: "Yes, the team size varies depending on the event. The allowed team size will be mentioned in the event description.",
   },

@@ -44,7 +44,8 @@ function SchedulePageInner() {
   const [focusedId, setFocusedId] = React.useState<string | null>(null)
   const events = getScheduleForDay(day === 1 ? 1 : 2)
   const startHour = day === 1 ? 11 : 9
-  const endHour = day === 1 ? 16 : 15
+  // Day 1 runs 11:00–17:00, Day 2 runs 09:00–15:30 (15.5h) in 30‑minute slots.
+  const endHour = day === 1 ? 17 : 15.5
   const timeSlots = Array.from({ length: (endHour - startHour) * 2 + 1 }, (_, i) => {
     const hour = startHour + Math.floor(i / 2)
     const minute = i % 2 === 0 ? "00" : "30"
@@ -160,7 +161,10 @@ function SchedulePageInner() {
                 const startMinutes = timeToMinutes(event.start)
                 const endMinutes = timeToMinutes(event.end)
                 const dayStartMinutes = startHour * 60
-                const totalMinutes = (endHour - startHour) * 60
+                // Keep bar alignment in lockstep with the header grid by basing
+                // geometry on the same 30‑minute slot count used for labels.
+                const slotCount = Math.max(timeSlots.length - 1, 1)
+                const totalMinutes = slotCount * 30
                 const left = ((startMinutes - dayStartMinutes) / totalMinutes) * 100
                 const width = ((endMinutes - startMinutes) / totalMinutes) * 100
 
