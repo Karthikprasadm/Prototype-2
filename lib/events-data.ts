@@ -20,6 +20,8 @@ export interface EventItem {
   date?: string
   /** Short description for the card */
   description?: string
+  /** Optional extra description block, rendered as an "Event flow" section on the event page. */
+  eventFlow?: string
   /** Rules as bullet points (array) or single string (will be split by sentence for display) */
   rules?: string[] | string
   /** Registration fee in INR */
@@ -536,6 +538,8 @@ export const departments: DepartmentEvents[] = [
         date: "8th–9th April, 2026",
         description:
           "Build multi-agent, context-aware AI systems that go beyond simple prompts and enable intelligent orchestration powered by MCP and tools.",
+        eventFlow:
+          "Specific problem statements for each track will be revealed on-site at the start of the event, and participants must develop their solutions accordingly.",
         rules:
           "Team size: 2–4 members. All core development must happen within the 24-hour Solaris X window. Frameworks and libraries are allowed; pre-built or previously shipped solutions are not. Teams must be present during evaluation. Team changes after the event begins are not permitted. No refunds in case of cancellation.",
         registrationFee: 800,
@@ -556,6 +560,8 @@ export const departments: DepartmentEvents[] = [
         date: "8th–9th April, 2026",
         description:
           "Create tools that improve how developers build, debug, test, deploy, monitor, and scale software systems.",
+        eventFlow:
+          "Specific problem statements for each track will be revealed on-site at the start of the event, and participants must develop their solutions accordingly.",
         rules:
           "Team size: 2–4 members. All core development must happen within the 24-hour Solaris X window. Frameworks and libraries are allowed; pre-built or previously shipped solutions are not. Teams must be present during evaluation. Team changes after the event begins are not permitted. No refunds in case of cancellation.",
         registrationFee: 800,
@@ -576,6 +582,8 @@ export const departments: DepartmentEvents[] = [
         date: "8th–9th April, 2026",
         description:
           "Design AI-driven systems that automate real workflows, reduce manual effort, and enable smarter operational processes.",
+        eventFlow:
+          "Specific problem statements for each track will be revealed on-site at the start of the event, and participants must develop their solutions accordingly.",
         rules:
           "Team size: 2–4 members. All core development must happen within the 24-hour Solaris X window. Frameworks and libraries are allowed; pre-built or previously shipped solutions are not. Teams must be present during evaluation. Team changes after the event begins are not permitted. No refunds in case of cancellation.",
         registrationFee: 800,

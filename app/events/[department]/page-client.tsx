@@ -89,6 +89,13 @@ export default function DepartmentEventsPageClient({ dept }: { dept: DepartmentE
                 <CardContent className="px-6 pb-6 space-y-4 text-sm">
                   {ev.description && <p className="text-white/80 leading-relaxed">{ev.description}</p>}
 
+                  {ev.eventFlow && (
+                    <div className="space-y-1.5">
+                      <h4 className="font-medium text-amber-200/95">Event flow</h4>
+                      <p className="leading-relaxed text-amber-100/90">{ev.eventFlow}</p>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-white/80">
                     {ev.registrationFee != null && (
                       <p>

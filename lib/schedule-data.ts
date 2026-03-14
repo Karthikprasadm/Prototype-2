@@ -8,6 +8,8 @@ type BaseScheduleItem = {
   eventName: string
   /** Optional override for the displayed name (for grouped/umbrella schedule items). */
   displayName?: string
+  /** Optional override for displayed time range (e.g. "12:30 – 12:30 (Day 2)" for cross-day hackathon). */
+  displayTime?: string
   /** Optional override for destination URL. */
   href?: string
   start: string
@@ -22,6 +24,8 @@ export type ResolvedScheduleItem = {
   name: string
   start: string
   end: string
+  /** Optional override for displayed time text (schedule page only). */
+  displayTime?: string
   color: string
   glowColor: string
   href?: string
@@ -30,6 +34,17 @@ export type ResolvedScheduleItem = {
 // Times are schedule-specific; names are resolved from `events-data` to prevent drift.
 const scheduleByDay: Record<ScheduleDayId, BaseScheduleItem[]> = {
   1: [
+    {
+      deptId: "grand-hackathon",
+      eventName: "MCP-Based Systems – Engineering Intelligent Systems",
+      displayName: "Solaris X - Grand Hackathon",
+      displayTime: "12:30 – 12:30 (Day 2)",
+      href: "/events/grand-hackathon",
+      start: "12:30",
+      end: "17:00",
+      color: "#3b82f6",
+      glowColor: "#60a5fa",
+    },
     { deptId: "csds", eventName: "Kill Switch Protocol", start: "11:00", end: "15:00", color: "#eab308", glowColor: "#fbbf24" },
     { deptId: "mech", eventName: "Robo Wars", start: "11:00", end: "17:00", color: "#ef4444", glowColor: "#f87171" },
     { deptId: "mca", eventName: "IoT Nexus", start: "11:00", end: "17:00", color: "#22d3ee", glowColor: "#67e8f9" },
@@ -57,16 +72,6 @@ const scheduleByDay: Record<ScheduleDayId, BaseScheduleItem[]> = {
     { deptId: "cy", eventName: "Escape & Exploit", start: "11:00", end: "17:00", color: "#22c55e", glowColor: "#4ade80" },
     { deptId: "ece", eventName: "Innovatrium", start: "11:00", end: "17:00", color: "#67e8f9", glowColor: "#a5f3fc" },
     { deptId: "gaming", eventName: "Valorant", start: "11:00", end: "17:00", color: "#f43f5e", glowColor: "#fb7185" },
-    {
-      deptId: "grand-hackathon",
-      eventName: "MCP-Based Systems – Engineering Intelligent Systems",
-      displayName: "Solaris X - Grand Hackathon",
-      href: "/events/grand-hackathon",
-      start: "12:00",
-      end: "17:00",
-      color: "#3b82f6",
-      glowColor: "#60a5fa",
-    },
     { deptId: "civil", eventName: "Bridge It!", start: "11:00", end: "17:00", color: "#6b7280", glowColor: "#9ca3af" },
   ],
   2: [
@@ -74,6 +79,7 @@ const scheduleByDay: Record<ScheduleDayId, BaseScheduleItem[]> = {
       deptId: "grand-hackathon",
       eventName: "MCP-Based Systems – Engineering Intelligent Systems",
       displayName: "Solaris X - Grand Hackathon",
+      displayTime: "12:30 (Day 1) – 12:30",
       href: "/events/grand-hackathon",
       start: "09:00",
       end: "12:30",
@@ -125,6 +131,7 @@ export function getScheduleForDay(day: ScheduleDayId): ResolvedScheduleItem[] {
         name: item.displayName ?? item.eventName,
         start: item.start,
         end: item.end,
+        displayTime: item.displayTime,
         color: item.color,
         glowColor: item.glowColor,
         href: item.href,
@@ -137,7 +144,7 @@ export function getScheduleForDay(day: ScheduleDayId): ResolvedScheduleItem[] {
         // eslint-disable-next-line no-console
         console.warn(`[schedule] Unresolved event "${item.eventName}" in dept "${item.deptId}".`)
       }
-      return { id: scheduleItemId(item), name: item.displayName ?? item.eventName, start: item.start, end: item.end, color: item.color, glowColor: item.glowColor }
+      return { id: scheduleItemId(item), name: item.displayName ?? item.eventName, start: item.start, end: item.end, displayTime: item.displayTime, color: item.color, glowColor: item.glowColor }
     }
 
     return {
@@ -145,6 +152,7 @@ export function getScheduleForDay(day: ScheduleDayId): ResolvedScheduleItem[] {
       name: item.displayName ?? resolved.ev.name,
       start: item.start,
       end: item.end,
+      displayTime: item.displayTime,
       color: item.color,
       glowColor: item.glowColor,
       href: `/events/${resolved.dept.id}#event-${resolved.idx}`,

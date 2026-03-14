@@ -31,7 +31,9 @@ const DARK_LUMINANCE = 0.4
 /** Bar background: light colors get a tint; dark colors get neutral light bg so white text is readable. */
 function barBackground(color: string): string {
   if (hexLuminance(color) < DARK_LUMINANCE) return "rgba(255,255,255,0.08)"
-  return `${color}18`
+  // For brighter bars, use a slightly stronger tint so the moving starfield
+  // behind doesn't show through as much and cause a flicker effect.
+  return `${color}29`
 }
 
 function isDarkBar(color: string): boolean {
@@ -108,7 +110,7 @@ function SchedulePageInner() {
           >
             <button
               onClick={() => setDay(1)}
-              className={`rounded-2xl px-5 py-2.5 text-sm font-medium transition-all duration-300 flex items-center gap-2 border backdrop-blur-xl ${
+              className={`rounded-2xl px-5 py-2.5 text-sm font-medium transition-all duration-300 flex items-center gap-2 border backdrop-blur-xl focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 ${
                 day === 1
                   ? "bg-white/[0.12] text-white border-white/30 shadow-[0_10px_28px_rgba(0,0,0,0.45)]"
                   : "bg-white/[0.06] text-white/80 border-white/[0.14] hover:bg-white/[0.1] hover:text-white hover:border-white/25"
@@ -119,7 +121,7 @@ function SchedulePageInner() {
             </button>
             <button
               onClick={() => setDay(2)}
-              className={`rounded-2xl px-5 py-2.5 text-sm font-medium transition-all duration-300 flex items-center gap-2 border backdrop-blur-xl ${
+              className={`rounded-2xl px-5 py-2.5 text-sm font-medium transition-all duration-300 flex items-center gap-2 border backdrop-blur-xl focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 ${
                 day === 2
                   ? "bg-white/[0.12] text-white border-white/30 shadow-[0_10px_28px_rgba(0,0,0,0.45)]"
                   : "bg-white/[0.06] text-white/80 border-white/[0.14] hover:bg-white/[0.1] hover:text-white hover:border-white/25"
@@ -207,8 +209,12 @@ function SchedulePageInner() {
 
                       {/* Timeline Bar — glass + event color tint */}
                       <div className="flex-1 relative h-14">
-                        <div className="relative overflow-visible" style={{ position: 'absolute', left: `${left}%`, width: `${width}%`, height: '100%' }}>
-                          <div className="relative overflow-visible h-full">
+                        <div
+                          className="relative overflow-visible"
+                          style={{ position: "absolute", left: `${left}%`, width: `${width}%`, height: "100%" }}
+                        >
+                          {/* Outer shell handles backdrop blur so the inner bar can stay fully stable */}
+                          <div className="relative overflow-visible h-full rounded-2xl backdrop-blur-xl">
                             <GlowEffect
                               colors={[event.glowColor, event.color]}
                               mode="breathe"
@@ -220,7 +226,7 @@ function SchedulePageInner() {
                             {event.href ? (
                               <Link
                                 href={event.href}
-                                className="relative h-full rounded-2xl border border-white/[0.08] backdrop-blur-xl transition-all duration-300 group-hover:scale-[1.01] group-hover:border-white/[0.12] flex items-center px-4 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                                className="relative h-full rounded-2xl border border-white/[0.08] transition-all duration-300 group-hover:scale-[1.01] group-hover:border-white/[0.12] flex items-center px-4 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                                 style={{
                                   backgroundColor: barBackground(event.color),
                                   ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
@@ -230,13 +236,13 @@ function SchedulePageInner() {
                                 <div className="flex items-center gap-2 text-white text-xs font-medium">
                                   <Clock className="w-3.5 h-3.5 opacity-80" style={{ color: event.color }} />
                                   <span className="text-white/90">
-                                    {event.start} – {event.end}
+                                    {event.displayTime ?? `${event.start} – ${event.end}`}
                                   </span>
                                 </div>
                               </Link>
                             ) : (
                               <div
-                                className="relative h-full rounded-2xl border border-white/[0.08] backdrop-blur-xl transition-all duration-300 group-hover:scale-[1.01] group-hover:border-white/[0.12] flex items-center px-4"
+                                className="relative h-full rounded-2xl border border-white/[0.08] transition-all duration-300 group-hover:scale-[1.01] group-hover:border-white/[0.12] flex items-center px-4"
                                 style={{
                                   backgroundColor: barBackground(event.color),
                                   ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
@@ -246,7 +252,7 @@ function SchedulePageInner() {
                                 <div className="flex items-center gap-2 text-white text-xs font-medium">
                                   <Clock className="w-3.5 h-3.5 opacity-80" style={{ color: event.color }} />
                                   <span className="text-white/90">
-                                    {event.start} – {event.end}
+                                    {event.displayTime ?? `${event.start} – ${event.end}`}
                                   </span>
                                 </div>
                               </div>
@@ -258,7 +264,8 @@ function SchedulePageInner() {
 
                     {/* Mobile View — same glass + tint as Events cards */}
                     <div className="md:hidden relative overflow-visible">
-                      <div className="relative overflow-visible rounded-3xl">
+                      {/* On mobile, apply backdrop blur on an outer shell, keeping the inner card fully opaque to avoid shimmer. */}
+                      <div className="relative overflow-visible rounded-3xl backdrop-blur-xl">
                         <GlowEffect
                           colors={[event.glowColor, event.color]}
                           mode="breathe"
@@ -270,7 +277,7 @@ function SchedulePageInner() {
                         {event.href ? (
                           <Link
                             href={event.href}
-                            className="relative block rounded-3xl border border-white/[0.06] backdrop-blur-xl p-4 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                            className="relative block rounded-3xl border border-white/[0.06] p-4 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                             style={{
                               backgroundColor: barBackground(event.color),
                               ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
@@ -282,12 +289,12 @@ function SchedulePageInner() {
                             </p>
                             <div className="mt-2 flex items-center gap-2 text-xs text-white/60">
                               <Clock className="w-3.5 h-3.5 shrink-0 opacity-80" style={{ color: event.color }} />
-                              <span>{event.start} – {event.end}</span>
+                              <span>{event.displayTime ?? `${event.start} – ${event.end}`}</span>
                             </div>
                           </Link>
                         ) : (
                           <div
-                            className="relative rounded-3xl border border-white/[0.06] backdrop-blur-xl p-4"
+                            className="relative rounded-3xl border border-white/[0.06] p-4"
                             style={{
                               backgroundColor: barBackground(event.color),
                               ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
@@ -299,7 +306,7 @@ function SchedulePageInner() {
                             </p>
                             <div className="mt-2 flex items-center gap-2 text-xs text-white/60">
                               <Clock className="w-3.5 h-3.5 shrink-0 opacity-80" style={{ color: event.color }} />
-                              <span>{event.start} – {event.end}</span>
+                              <span>{event.displayTime ?? `${event.start} – ${event.end}`}</span>
                             </div>
                           </div>
                         )}
