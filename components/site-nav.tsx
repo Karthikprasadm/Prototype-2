@@ -180,7 +180,6 @@ export function SiteNav() {
     // If navigation happens while open, close cleanly.
     setIsMobileSearchOpen(false)
     setMobileSearchQuery("")
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
   const activeIndex = navItems.findIndex(({ href }) =>
@@ -493,7 +492,7 @@ export function SiteNav() {
             position: "fixed",
             top: "50%", left: "50%",
             zIndex: 50,
-            width: "min(86vw, 320px)",
+            width: "min(80vw, 280px)",
             animation: isMobileMenuOpen ? "glassMenuIn 0.35s cubic-bezier(0.22,1,0.36,1) both" : "none",
             opacity: isMobileMenuOpen ? 1 : 0,
             pointerEvents: isMobileMenuOpen ? "auto" : "none",
@@ -502,7 +501,7 @@ export function SiteNav() {
         >
           {/* Card surface */}
           <div style={{
-            borderRadius: 24,
+            borderRadius: 20,
             overflow: "hidden",
             // Slightly more opaque + subtle gradient so items stay readable over busy backgrounds.
             background: "linear-gradient(180deg, rgba(10,10,12,0.96), rgba(6,6,8,0.94))",
@@ -528,27 +527,27 @@ export function SiteNav() {
             {/* Header */}
             <div style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "14px 18px 10px",
+              padding: "10px 14px 8px",
               borderBottom: "1px solid rgba(255,255,255,0.06)",
             }}>
               <span style={{
                 fontFamily: "var(--font-geist-mono), monospace",
-                fontSize: 9, letterSpacing: "0.3em",
+                fontSize: 8, letterSpacing: "0.3em",
                 color: "rgba(255,255,255,0.25)",
                 textTransform: "uppercase",
               }}>
                 Menu
               </span>
               <div style={{
-                display: "flex", alignItems: "center", gap: 5,
+                display: "flex", alignItems: "center", gap: 4,
               }}>
-                <div style={{ width: 5, height: 5, borderRadius: "50%", background: "rgba(59,130,246,0.55)" }} />
-                <div style={{ width: 5, height: 5, borderRadius: "50%", background: "rgba(34,211,238,0.42)" }} />
+                <div style={{ width: 4, height: 4, borderRadius: "50%", background: "rgba(59,130,246,0.55)" }} />
+                <div style={{ width: 4, height: 4, borderRadius: "50%", background: "rgba(34,211,238,0.42)" }} />
               </div>
             </div>
 
             {/* Nav items */}
-            <nav style={{ padding: "10px 12px 10px" }}>
+            <nav style={{ padding: "8px 10px 8px" }}>
               {navItems.map(({ href, label, icon: Icon }, index) => {
                 const isActive = activeIndex === index
                 const accent = "rgba(59,130,246,0.95)"
@@ -562,10 +561,10 @@ export function SiteNav() {
                       position: "relative",
                       display: "flex",
                       alignItems: "center",
-                      gap: 12,
-                      padding: "12px 12px",
-                      borderRadius: 18,
-                      marginBottom: 8,
+                      gap: 10,
+                      padding: "10px 10px",
+                      borderRadius: 14,
+                      marginBottom: 6,
                       textDecoration: "none",
                       // Match Events card language: neutral glass cards (no per-item tint).
                       background: isActive ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.22)",
@@ -587,7 +586,7 @@ export function SiteNav() {
                       style={{
                         position: "absolute",
                         inset: 0,
-                        borderRadius: 18,
+                        borderRadius: 14,
                         pointerEvents: "none",
                         opacity: isActive ? 1 : 0,
                         background: "linear-gradient(90deg, rgba(59,130,246,0.18), rgba(255,255,255,0) 55%)",
@@ -597,7 +596,7 @@ export function SiteNav() {
 
                     {/* Icon */}
                     <div style={{
-                      width: 36, height: 36, borderRadius: 14, flexShrink: 0,
+                      width: 30, height: 30, borderRadius: 12, flexShrink: 0,
                       display: "flex", alignItems: "center", justifyContent: "center",
                       background: isActive
                         ? "rgba(255,255,255,0.10)"
@@ -606,7 +605,7 @@ export function SiteNav() {
                       boxShadow: isActive ? "0 0 0 1px rgba(255,255,255,0.05), 0 0 18px rgba(59,130,246,0.10)" : "none",
                       transition: "all 0.2s ease",
                     }}>
-                      <Icon size={15} style={{
+                      <Icon size={14} style={{
                         color: isActive ? "rgba(255,255,255,0.98)" : "rgba(255,255,255,0.78)",
                         transition: "color 0.2s ease",
                       }} />
@@ -615,7 +614,7 @@ export function SiteNav() {
                     {/* Label */}
                     <span style={{
                       flex: 1,
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: isActive ? 500 : 400,
                       color: isActive ? "rgba(255,255,255,0.98)" : "rgba(255,255,255,0.80)",
                       letterSpacing: "0.01em",
@@ -627,7 +626,7 @@ export function SiteNav() {
                     {/* Active indicator */}
                     {isActive && (
                       <div style={{
-                        width: 6, height: 6, borderRadius: "50%", flexShrink: 0,
+                        width: 5, height: 5, borderRadius: "50%", flexShrink: 0,
                         background: accent,
                         boxShadow: "0 0 0 3px rgba(59,130,246,0.14), 0 0 16px rgba(59,130,246,0.18)",
                       }} aria-hidden />
@@ -640,11 +639,11 @@ export function SiteNav() {
             {/* Footer */}
             <div style={{
               borderTop: "1px solid rgba(255,255,255,0.05)",
-              padding: "10px 18px 12px",
+              padding: "8px 14px 10px",
             }}>
               <p style={{
                 fontFamily: "var(--font-geist-mono), monospace",
-                fontSize: 9, letterSpacing: "0.22em",
+                fontSize: 8, letterSpacing: "0.22em",
                 color: "rgba(255,255,255,0.13)",
                 textTransform: "uppercase",
               }}>
@@ -768,23 +767,26 @@ export function SiteNav() {
           </div>
         </div>
 
-        {/* Centered top pill — burger left, search right */}
-        <div className="fixed top-4 left-0 right-0 z-50 flex justify-center pointer-events-none">
-          <div className="pointer-events-auto flex items-center rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-xl shadow-lg px-1.5 py-1.5 gap-0.5">
+        {/* Centered top pill — burger left, search right; smaller on mobile, properly centered with safe area */}
+        <div
+          className="fixed top-3 left-0 right-0 z-50 flex justify-center pointer-events-none px-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] md:px-0"
+          style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
+        >
+          <div className="pointer-events-auto flex items-center rounded-xl md:rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-xl shadow-lg px-1 py-1 md:px-1.5 md:py-1.5 gap-0.5 ml-2 md:ml-0">
             <button
               onClick={() => { setIsMobileMenuOpen((v) => !v); setIsMobileSearchOpen(false) }}
-              className="flex h-8 w-8 items-center justify-center rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200 active:scale-90 focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg md:rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200 active:scale-90 focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               aria-label="Toggle mobile menu"
             >
-              {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {isMobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
             </button>
-            <span className="text-white/20 text-xs leading-none select-none px-1" aria-hidden>|</span>
+            <span className="text-white/20 text-[10px] md:text-xs leading-none select-none px-0.5 md:px-1" aria-hidden>|</span>
             <button
               onClick={() => { setIsMobileSearchOpen((v) => !v); setIsMobileMenuOpen(false) }}
-              className="flex h-8 w-8 items-center justify-center rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200 active:scale-90 focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg md:rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200 active:scale-90 focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               aria-label="Search"
             >
-              {isMobileSearchOpen ? <X size={16} /> : <Search size={16} />}
+              {isMobileSearchOpen ? <X size={14} /> : <Search size={14} />}
             </button>
           </div>
         </div>

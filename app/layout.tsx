@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import Script from "next/script"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
@@ -53,7 +53,17 @@ export const metadata: Metadata = {
   },
   manifest: "/favicon/site.webmanifest",
 }
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: "#0f172a",
+}
+
 import { SiteBackground } from "@/components/site-background"
+import { PwaRegister } from "@/components/pwa-register"
 
 export default function RootLayout({
   children,
@@ -113,13 +123,14 @@ export default function RootLayout({
           {/* Corner logos that fade out on scroll */}
           <CornerLogos />
 
-          {/* Page Content */}
-          <div className="min-h-screen flex flex-col">
-            <div className="flex-1">{children}</div>
+          {/* Page Content — overflow-x-hidden prevents horizontal scroll on mobile; safe-area handled per page */}
+          <div className="min-h-screen min-h-[100dvh] flex flex-col overflow-x-hidden">
+            <div className="flex-1 min-w-0">{children}</div>
           </div>
 
           {/* Toasts */}
           <Toaster />
+          <PwaRegister />
         </ThemeProvider>
       </body>
     </html>

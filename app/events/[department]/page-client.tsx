@@ -35,7 +35,7 @@ export default function DepartmentEventsPageClient({ dept }: { dept: DepartmentE
 
       <div className="relative z-[20] pt-24 px-6 pb-24">
         <div className="max-w-3xl mx-auto text-white/90">
-          <Link href="/events" className="text-sm text-white/70 hover:text-white mb-6 inline-block">
+          <Link href="/events" className="inline-flex items-center min-h-[44px] text-sm text-white/70 hover:text-white mb-6 touch-action-manipulation">
             ← All events
           </Link>
 
@@ -44,31 +44,31 @@ export default function DepartmentEventsPageClient({ dept }: { dept: DepartmentE
             {dept.events.length} track{dept.events.length !== 1 ? "s" : ""} in this department.
           </p>
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {eventsForDisplay.map(({ ev, originalIndex }) => (
               <Card
                 key={ev.name}
                 id={`event-${originalIndex}`}
                 className="rounded-2xl border-white/10 bg-white/5 backdrop-blur-md shadow-lg shadow-black/20 overflow-hidden"
               >
-                <CardHeader className="pb-3 px-6 pt-6">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <CardTitle className="text-xl text-white tracking-tight">{ev.name}</CardTitle>
+                <CardHeader className="pb-1 pt-2.5 px-2.5 text-left sm:pb-3 sm:pt-6 sm:px-6">
+                  <div className="flex flex-wrap items-center justify-start gap-1">
+                    <CardTitle className="text-base text-white tracking-tight sm:text-xl">{ev.name}</CardTitle>
                     <Badge
                       variant={ev.type === "Flagship" ? "default" : "secondary"}
                       className={
                         ev.type === "Flagship"
-                          ? "rounded-full bg-amber-500/20 text-amber-300 border-amber-500/40 px-2.5 py-0.5"
-                          : "rounded-full bg-white/10 text-white/80 border-white/20 px-2.5 py-0.5"
+                          ? "rounded-full bg-amber-500/20 text-amber-300 border-amber-500/40 px-2 py-0.5 text-xs sm:px-2.5"
+                          : "rounded-full bg-white/10 text-white/80 border-white/20 px-2 py-0.5 text-xs sm:px-2.5"
                       }
                     >
                       {ev.tag ?? ev.type}
                     </Badge>
                   </div>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/60 pt-2">
+                  <div className="flex flex-wrap items-center justify-start gap-x-2.5 gap-y-0.5 text-left text-xs text-white/60 pt-0.5 sm:gap-x-4 sm:text-sm sm:pt-2">
                     {ev.date && <span>Date: {ev.date}</span>}
                     <span>Team: {ev.teamSize}</span>
-                    <span>
+                    <span className="inline-flex items-center">
                       Duration:{" "}
                       {(() => {
                         const jump = getScheduleJumpForEvent(dept.id, ev.name)
@@ -76,7 +76,7 @@ export default function DepartmentEventsPageClient({ dept }: { dept: DepartmentE
                         return (
                           <Link
                             href={`/schedule?day=${jump.day}&focus=${encodeURIComponent(jump.focusId)}`}
-                            className="underline underline-offset-4 decoration-white/30 hover:decoration-white/70 text-white/70 hover:text-white transition-colors"
+                            className="inline-flex items-center min-h-[44px] underline underline-offset-4 decoration-white/30 hover:decoration-white/70 text-white/70 hover:text-white transition-colors touch-action-manipulation"
                           >
                             {ev.duration}
                           </Link>
@@ -86,27 +86,28 @@ export default function DepartmentEventsPageClient({ dept }: { dept: DepartmentE
                   </div>
                 </CardHeader>
 
-                <CardContent className="px-6 pb-6 space-y-4 text-sm">
-                  {ev.description && <p className="text-white/80 leading-relaxed">{ev.description}</p>}
+                <CardContent className="px-2.5 pb-2.5 space-y-1.5 text-left text-sm sm:px-6 sm:pb-6 sm:space-y-4">
+                  {ev.description && <p className="text-[13px] text-white/80 leading-tight sm:text-sm sm:leading-relaxed">{ev.description}</p>}
 
                   {ev.eventFlow && (
-                    <div className="space-y-1.5">
-                      <h4 className="font-medium text-amber-200/95">Event flow</h4>
-                      <p className="leading-relaxed text-amber-100/90">{ev.eventFlow}</p>
+                    <div className="space-y-0 text-left">
+                      <h4 className="text-[13px] font-medium text-amber-200/95 sm:text-sm">Event flow</h4>
+                      <p className="text-[13px] leading-tight text-amber-100/90 sm:text-sm sm:leading-relaxed">{ev.eventFlow}</p>
                     </div>
                   )}
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-white/80">
+                  <div className="grid grid-cols-1 gap-1 text-left text-white/80 sm:grid-cols-2 sm:gap-3">
                     {ev.registrationFee != null && (
-                      <p>
-                        <span className="text-white/50">Registration fee:</span> ₹{ev.registrationFee}
+                      <p className="flex items-baseline text-[13px] sm:text-sm">
+                        <span className="text-white/50">Registration fee:</span>{" "}
+                        <span className="inline-flex items-baseline">₹{ev.registrationFee}</span>
                       </p>
                     )}
                     {dept.id !== "grand-hackathon" && (
-                      <p className="flex items-center gap-2">
+                      <p className="flex items-baseline gap-2 text-[13px] sm:text-sm">
                         <span className="text-white/50">Prize pool:</span>
                         <span
-                          className="font-semibold tracking-tight"
+                          className="inline-flex items-baseline font-semibold tracking-tight"
                           style={{
                             color: ev.type === "Flagship" ? "rgba(251,191,36,0.95)" : "rgba(147,197,253,0.95)",
                             textShadow:
@@ -122,7 +123,7 @@ export default function DepartmentEventsPageClient({ dept }: { dept: DepartmentE
                     )}
                   </div>
 
-                  <div className="pt-1">
+                  <div>
                     <EventRegisterDialog
                       departmentId={dept.id}
                       departmentName={dept.fullName ?? dept.name}
@@ -137,8 +138,8 @@ export default function DepartmentEventsPageClient({ dept }: { dept: DepartmentE
                   {ev.rules && <EventCardRules rules={ev.rules} />}
 
                   {ev.contacts && ev.contacts.length > 0 && (
-                    <div>
-                      <h4 className="text-white/90 font-medium mb-2">Contact</h4>
+                    <div className="text-left">
+                      <h4 className="text-white/90 font-medium mb-0.5 text-[13px] sm:mb-2 sm:text-sm">Contact</h4>
                       <ContactList contacts={ev.contacts} />
                     </div>
                   )}

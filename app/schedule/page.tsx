@@ -81,7 +81,7 @@ function SchedulePageInner() {
   return (
     <main className="relative min-h-screen bg-black overflow-x-hidden">
       <LuminusParticles startDispersed hideCursor={false} particleGap={4} />
-      <div className="relative z-10 pt-28 pb-20 px-5 sm:px-8">
+      <div className="relative z-10 pt-28 pb-20 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:px-8">
         <div className="mx-auto max-w-5xl">
           {/* Header — matches Events/Contact pattern */}
           <motion.header
@@ -110,7 +110,7 @@ function SchedulePageInner() {
           >
             <button
               onClick={() => setDay(1)}
-              className={`rounded-2xl px-5 py-2.5 text-sm font-medium transition-all duration-300 flex items-center gap-2 border backdrop-blur-xl focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 ${
+              className={`rounded-2xl min-h-[44px] px-5 py-3 text-sm font-medium transition-all duration-300 flex items-center gap-2 border backdrop-blur-xl touch-action-manipulation focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 ${
                 day === 1
                   ? "bg-white/[0.12] text-white border-white/30 shadow-[0_10px_28px_rgba(0,0,0,0.45)]"
                   : "bg-white/[0.06] text-white/80 border-white/[0.14] hover:bg-white/[0.1] hover:text-white hover:border-white/25"
@@ -121,7 +121,7 @@ function SchedulePageInner() {
             </button>
             <button
               onClick={() => setDay(2)}
-              className={`rounded-2xl px-5 py-2.5 text-sm font-medium transition-all duration-300 flex items-center gap-2 border backdrop-blur-xl focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 ${
+              className={`rounded-2xl min-h-[44px] px-5 py-3 text-sm font-medium transition-all duration-300 flex items-center gap-2 border backdrop-blur-xl touch-action-manipulation focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 ${
                 day === 2
                   ? "bg-white/[0.12] text-white border-white/30 shadow-[0_10px_28px_rgba(0,0,0,0.45)]"
                   : "bg-white/[0.06] text-white/80 border-white/[0.14] hover:bg-white/[0.1] hover:text-white hover:border-white/25"

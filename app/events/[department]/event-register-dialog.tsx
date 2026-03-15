@@ -113,13 +113,13 @@ export function EventRegisterDialog({
         <Button
           size="sm"
           disabled={!registrationOpen}
-          className="mt-1 rounded-full bg-amber-400 text-black shadow-[0_10px_30px_rgba(251,191,36,0.28)] transition-all hover:-translate-y-0.5 hover:bg-amber-300 disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:bg-amber-400"
+          className="mt-1 min-h-[44px] rounded-full bg-amber-400 text-black shadow-[0_10px_30px_rgba(251,191,36,0.28)] transition-all hover:-translate-y-0.5 hover:bg-amber-300 disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:bg-amber-400 touch-action-manipulation"
         >
           {registrationOpen ? "Register" : "Registrations closed"}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl bg-[#020202]/95 text-white border-0 rounded-3xl shadow-[0_30px_90px_rgba(0,0,0,0.9)] backdrop-blur-2xl p-0 overflow-hidden">
-        <div className="rounded-t-3xl border-b border-white/[0.05] bg-gradient-to-r from-[#111111] via-[#080808] to-[#0f0f0f] px-6 py-5">
+      <DialogContent className="max-w-2xl max-h-[85dvh] flex flex-col bg-[#020202]/95 text-white border-0 rounded-3xl shadow-[0_30px_90px_rgba(0,0,0,0.9)] backdrop-blur-2xl p-0 overflow-hidden">
+        <div className="shrink-0 rounded-t-3xl border-b border-white/[0.05] bg-gradient-to-r from-[#111111] via-[#080808] to-[#0f0f0f] px-6 py-5">
           <DialogHeader className="space-y-1.5">
             <DialogTitle className="text-xl sm:text-2xl font-semibold tracking-tight">
             Register for {eventName}
@@ -133,7 +133,7 @@ export function EventRegisterDialog({
           </DialogHeader>
         </div>
 
-        <div className="max-h-[72vh] overflow-y-auto no-scrollbar bg-[#050505]/95 rounded-b-3xl">
+        <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar bg-[#050505]/95 rounded-b-3xl">
           <form
             onSubmit={async (e) => {
               const form = e.currentTarget as HTMLFormElement
@@ -308,8 +308,8 @@ export function EventRegisterDialog({
                         aria-pressed={active}
                         onClick={() => setSelectedTrack(track)}
                         className={`
-                          flex items-center justify-between rounded-2xl px-3.5 py-2.5 text-[13px]
-                          border transition-all duration-200
+                          flex min-h-[44px] items-center justify-between rounded-2xl px-3.5 py-2.5 text-[13px]
+                          border transition-all duration-200 touch-action-manipulation
                           ${active
                             ? "border-amber-300/80 bg-amber-300/10 text-white shadow-[0_0_0_1px_rgba(251,191,36,0.18)]"
                             : "border-white/12 bg-black/40 text-white/75 hover:border-white/30 hover:bg-black/30"}
@@ -481,7 +481,7 @@ export function EventRegisterDialog({
                         return [...prev, next]
                       })
                     }
-                    className="inline-flex items-center gap-2 rounded-full bg-[#1f1f1f] px-3 py-1.5 text-sm text-white/90 hover:bg-[#2a2a2a] transition-colors"
+                    className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-[#1f1f1f] px-3 py-2 text-sm text-white/90 hover:bg-[#2a2a2a] transition-colors touch-action-manipulation"
                     aria-label="Add participant"
                   >
                     <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#30343a] text-white leading-none">
@@ -503,7 +503,7 @@ export function EventRegisterDialog({
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="h-10 rounded-full bg-amber-400 px-5 text-black font-semibold shadow-[0_10px_30px_rgba(251,191,36,0.3)] transition-all hover:-translate-y-0.5 hover:bg-amber-300"
+                  className="min-h-[44px] h-11 rounded-full bg-amber-400 px-5 text-black font-semibold shadow-[0_10px_30px_rgba(251,191,36,0.3)] transition-all hover:-translate-y-0.5 hover:bg-amber-300 touch-action-manipulation"
                 >
                   {isSubmitting ? "Saving & redirecting..." : "Pay now"}
                 </Button>

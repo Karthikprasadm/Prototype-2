@@ -88,7 +88,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       const h = window.innerHeight
       const prevW = canvas.width
       const prevH = canvas.height
-      // Keep DPR capped so we don't over-render the canvas; slightly under native on desktop for smoother animation.
+      // Keep DPR capped so we don't over-render; DPR 1 on mobile for performance on Android/iOS.
       const dprCap = isMobileViewport() ? 1 : 1.5
       const dpr = Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, dprCap)
       const nextW = Math.max(1, Math.round(w * dpr))
@@ -188,12 +188,14 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
           const offCtx = off.getContext("2d")!
           off.width = canvas.width
           off.height = canvas.height
-          const scaleMultiplier = window.innerWidth < 768 ? 1.16 : 1.15
+          const isMobile = window.innerWidth < 768
+          // On mobile: scale so logo fits inside the screen with a small margin; desktop unchanged.
+          const scaleMultiplier = isMobile ? 0.96 : 1.15
           const scale = Math.min(off.width / img.width, off.height / img.height) * scaleMultiplier
           const w = img.width * scale
           const h = img.height * scale
-          const x = (off.width - w) / 2
-          const y = (off.height - h) / 2 - off.height * 0.1
+          const x = isMobile ? (off.width - w) / 2 - off.width * 0.02 : (off.width - w) / 2
+          const y = isMobile ? (off.height - h) / 2 - off.height * 0.08 : (off.height - h) / 2 - off.height * 0.1
           offCtx.drawImage(img, x, y, w, h)
           imageData = offCtx.getImageData(0, 0, off.width, off.height)
           resolve()
@@ -208,6 +210,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       particles = []
       // Tighter gap = more particles in the collected logo; we cull drawing when dispersed for performance.
       const isMobile = isMobileViewport()
+      // Tighter gap on mobile for more particles in the logo (still performant).
       const gap = isMobile ? Math.max(3, particleGap) : Math.max(2, particleGap)
       for (let y = 0; y < canvas.height; y += gap) {
         for (let x = 0; x < canvas.width; x += gap) {
@@ -218,9 +221,11 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
             const wf = isTextPixel ? 0.75 : 0
 
             // Thin out non-text particles for smoother performance; text stays dense for legibility.
+            // Keep more particles in the lower "2026" band so it stays visible.
+            const is2026Band = y > canvas.height * 0.55
             if (!isTextPixel) {
               if (!isMobile && Math.random() < 0.6) continue
-              if (isMobile && Math.random() < 0.3) continue
+              if (isMobile && Math.random() < (is2026Band ? 0.04 : 0.12)) continue
             }
 
             const rVal = Math.round(Math.min(255, r + (255 - r) * wf))
@@ -249,7 +254,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
             // Make text – especially the lower "2026" band – denser so the logo is clearly legible when collected.
             if (isTextPixel) {
               const extraCount = isMobile
-                ? (y > canvas.height * 0.6 ? 2 : 1)
+                ? (y > canvas.height * 0.55 ? 5 : 3)
                 : (y > canvas.height * 0.6 ? 3 : 2)
               for (let n = 0; n < extraCount; n++) {
                 particles.push({
@@ -416,13 +421,20 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       const maxSpeed = isMobile ? 20 : 24
       const maxSpeedSq = maxSpeed * maxSpeed
       const friction = isMobile ? 0.88 : 0.91
-      const readabilityDim = 1 - 0.45 * scrollProgress
-      
+      // On mobile use a slightly brighter logo (less dimming by scroll) and higher particle opacity.
+      const readabilityDim = isMobile ? 1 - 0.38 * scrollProgress : 1 - 0.45 * scrollProgress
+      const opacityBoost = isMobile ? 1.22 : 1
+      // When dispersed (spread across background), draw fewer particles and make them less bright.
+      const dispersedAlphaScale = 1 - 0.4 * disperse
+      const skipWhenDispersed = disperse > 0.45
+
       const time0015 = time * 0.0015
       const time0013 = time * 0.0013
       const time003 = time * 0.003
 
       for (let idx = 0; idx < particles.length; idx++) {
+        if (skipWhenDispersed && idx % 2 === 0) continue
+
         const p = particles[idx]
         const targetX = p.tx * invDisperse + p.bgx * disperse
         const targetY = p.ty * invDisperse + p.bgy * disperse
@@ -469,7 +481,11 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
 
         const twinkle = 0.6 + 0.4 * Math.sin(time003 + p.phase)
 
-        ctx.globalAlpha = twinkle * readabilityDim
+        // Boost brightness for the lower "2026" band so it stays clearly visible.
+        const is2026Band = p.ty > canvas.height * 0.55
+        const bandBoost = is2026Band ? 1.55 : 1
+
+        ctx.globalAlpha = Math.min(1, (twinkle * readabilityDim) * opacityBoost * dispersedAlphaScale * bandBoost)
         ctx.fillStyle = p.rgbStr
         ctx.fillRect(p.x, p.y, p.size, p.size)
       }
@@ -489,38 +505,46 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
         ctx.save()
         ctx.globalAlpha = textAlpha
         ctx.textAlign = "center"
-        // Make mobile text substantially larger for readability on small screens.
-        const baseFont = isMobile ? 16 : 11
+        // Mobile: use a font that fits; we'll wrap long lines so we don't have to shrink too much.
+        const baseFont = isMobile ? 13 : 11
         const fontSize = Math.round(baseFont * dpr)
-        const lineH = (isMobile ? 24 : 20) * dpr
-        const lines = isMobile
-          ? [
-            "LUMINUS 2026 MARKS A NEW BEGINNING AT RNSIT,",
-            "THE FIRST NATIONAL-LEVEL INTERCOLLEGIATE",
-            "TECH FEST IN ITS LANDMARK 25TH YEAR.",
-            "2,000+ STUDENTS. BOLD IDEAS. ONE STAGE.",
+        const lineH = (isMobile ? 19 : 20) * dpr
+        const fontFamily = `"Courier New", Courier, "Lucida Console", monospace`
+        const letterSpacingRatio = isMobile ? 0.04 : 0.18
+        // Max width for a line: leave safe margin so text never overflows (letterSpacing can add width).
+        const maxLineWidth = canvas.width * (isMobile ? 0.88 : 0.95)
+
+        let lines: string[]
+        if (isMobile) {
+          lines = [
+            "LUMINUS 2026 MARKS A NEW",
+            "BEGINNING AT RNSIT,",
+            "THE FIRST NATIONAL-LEVEL",
+            "INTERCOLLEGIATE TECH FEST",
+            "IN ITS LANDMARK 25TH YEAR.",
+            "2,000+ STUDENTS. BOLD IDEAS.",
+            "ONE STAGE.",
           ]
-          : [
+        } else {
+          lines = [
             "LUMINUS 2026 IS RNSIT'S FIRST NATIONAL-LEVEL INTERCOLLEGIATE TECH FEST,",
             "LAUNCHED IN ITS LANDMARK 25TH YEAR TO BEGIN A LEGACY OF INNOVATION.",
             "WITH 2,000+ STUDENTS NATIONWIDE, IT BLENDS TECHNICAL AND INTERDISCIPLINARY",
             "CHALLENGES THAT INSPIRE YOU TO COMPETE, GROW, AND SHINE.",
           ]
+        }
 
         const textOpacity = isMobile ? 0.75 : 0.38
         ctx.fillStyle = `rgba(255, 255, 255, ${textOpacity})`
-        const letterSpacingRatio = isMobile ? 0.06 : 0.18
-        const fontFamily = `"Space Mono", "JetBrains Mono", "SF Mono", Menlo, monospace`
         ctx.font = `500 ${fontSize}px ${fontFamily}`
         ctx.letterSpacing = `${Math.round(letterSpacingRatio * fontSize)}px`
 
-        // Scale font down if the longest line overflows the canvas
-        const maxLineWidth = canvas.width * 0.95
+        // Ensure no line overflows: scale down only if needed (desktop or if wrapped mobile line still overflows).
         const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b), "")
         const measuredWidth = ctx.measureText(longestLine).width
         let effectiveFontSize = fontSize
         if (measuredWidth > maxLineWidth) {
-          effectiveFontSize = Math.floor(fontSize * (maxLineWidth / measuredWidth))
+          effectiveFontSize = Math.max(isMobile ? 11 : 9, Math.floor(fontSize * (maxLineWidth / measuredWidth)))
           ctx.font = `500 ${effectiveFontSize}px ${fontFamily}`
           ctx.letterSpacing = `${Math.round(letterSpacingRatio * effectiveFontSize)}px`
         }

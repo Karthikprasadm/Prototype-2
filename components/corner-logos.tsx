@@ -55,18 +55,18 @@ export function CornerLogos() {
   const rightLogoWidth = showLuminusLogoOnRight ? 144 : 80
   const rightLogoHeight = showLuminusLogoOnRight ? 144 : 80
   const rightLogoClassName = showLuminusLogoOnRight
-    ? "h-20 w-auto max-h-20 object-contain sm:h-36 sm:max-h-36"
-    : "h-14 w-auto max-h-14 object-contain sm:h-16 sm:max-h-16"
+    ? "h-16 w-auto max-h-16 object-contain sm:h-36 sm:max-h-36"
+    : "h-10 w-auto max-h-10 object-contain sm:h-16 sm:max-h-16"
 
   const rightLogoWrapperClassName = showLuminusLogoOnRight
-    ? "fixed top-3 right-3 z-50 flex h-14 sm:h-20 items-center justify-center"
-    : "fixed top-4 right-4 z-50 flex h-14 sm:h-20 items-center justify-center"
+    ? "fixed -top-1 right-[max(0.5rem,env(safe-area-inset-right))] z-50 flex h-16 sm:h-20 sm:top-2.5 items-center justify-center"
+    : "fixed top-3 right-[max(0.5rem,env(safe-area-inset-right))] z-50 flex h-11 sm:h-20 items-center justify-center"
 
   return (
     <>
-      {/* Left Logo */}
+      {/* Left Logo — smaller on mobile, safe-area so nav fits in top middle */}
       <div
-        className="fixed top-4 left-4 z-50 flex h-10 sm:h-20 items-center justify-center"
+        className="fixed top-2.5 left-[max(0.5rem,env(safe-area-inset-left))] z-50 flex h-8 sm:h-20 items-center justify-center"
         aria-hidden
         style={style}
       >
@@ -79,7 +79,7 @@ export function CornerLogos() {
           // Still fetch eagerly on home for good LCP.
           loading={isHome ? "eager" : "lazy"}
           fetchPriority={isHome ? "high" : "auto"}
-          className="h-10 w-auto max-h-10 object-contain sm:h-20 sm:max-h-20"
+          className="h-8 w-auto max-h-8 object-contain sm:h-20 sm:max-h-20"
         />
       </div>
 

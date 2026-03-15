@@ -33,7 +33,7 @@ export default function EventsPage() {
     <main className="relative min-h-screen">
       <LuminusParticles startDispersed hideCursor={false} particleGap={4} />
       <div className="relative z-[20] pt-24 pb-20">
-        <div className="mx-auto max-w-3xl px-5 sm:px-8">
+        <div className="mx-auto max-w-3xl pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:px-8">
           <header className="mb-8">
             <h1 className="text-[2rem] font-semibold tracking-tight text-white sm:text-3xl">
               Events
@@ -73,18 +73,23 @@ export default function EventsPage() {
                         boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.35)",
                       }}
                     >
-                    <div className="relative pl-8 pr-7 py-7 sm:pl-11 sm:py-9">
+                    <div className="relative pl-7 pr-6 py-5 sm:pl-11 sm:py-9">
                       <p className="mb-2 text-[10px] font-medium uppercase tracking-[0.28em] text-amber-400/70">
                         Featured
                       </p>
-                      <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                      <h2 className="text-xl font-semibold tracking-tight text-white sm:text-3xl">
                         {grandHackathon.fullName ?? grandHackathon.name}
                       </h2>
-                      <p className="mt-2 text-base text-amber-200/80">
+                      <p className="mt-1.5 text-sm sm:text-base text-amber-200/80">
                         3 tracks · 24 hr · ₹1,20,000+ prize pool
                       </p>
-                      <p className="mt-3 text-sm text-white/55 leading-relaxed max-w-xl">
-                        Solaris X is a 24-hour engineering sprint focused on building scalable, real-world systems utilizing modern AI frameworks and cutting-edge development technologies. Under the theme <strong className="text-white/90 font-medium">&ldquo;Engineering the Systems of Tomorrow,&rdquo;</strong> participants will design, build, and deploy impactful solutions across three powerful tracks.
+                      <p className="mt-2.5 text-xs sm:text-sm text-white/55 leading-relaxed max-w-xl">
+                        Solaris X is a 24-hour hackathon focused on building scalable, real-world systems using modern AI technologies.{" "}
+                        Under{" "}
+                        <strong className="text-white/90 font-medium">
+                          &ldquo;Engineering the Systems of Tomorrow,&rdquo;
+                        </strong>{" "}
+                        teams will create solutions across three tracks.
                       </p>
                       <p className="mt-3 text-sm text-white/50 transition-colors group-hover:text-white/70">
                         View details →

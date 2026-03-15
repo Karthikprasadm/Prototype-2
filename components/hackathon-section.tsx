@@ -14,10 +14,12 @@ export default function HackathonSection() {
   }, [])
 
   useEffect(() => {
+    const isMobileViewport = () => typeof window !== "undefined" && window.innerWidth < 768
+    const interval = isMobileViewport() ? 4200 : 2800
     const id = setInterval(() => {
       setGlitch(true)
       setTimeout(() => setGlitch(false), 180)
-    }, 2800)
+    }, interval)
     return () => clearInterval(id)
   }, [])
 
@@ -159,7 +161,11 @@ export default function HackathonSection() {
         style={{
           minHeight: isMobile ? 'auto' : '100vh',
           width: '100%',
-          padding: isMobile ? '72px 20px 32px' : '5vw 6vw',
+          maxWidth: '100%',
+          overflowX: 'hidden',
+          padding: isMobile
+            ? '72px max(20px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left))'
+            : '5vw 6vw',
         }}
       >
         <div className="hack-inner">

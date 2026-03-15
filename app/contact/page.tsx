@@ -105,8 +105,8 @@ export default function ContactPage() {
   return (
     <main className="relative min-h-screen">
       <LuminusParticles startDispersed hideCursor={false} particleGap={4} />
-      <div className="relative z-[20] pt-24 pb-20">
-        <div className="mx-auto max-w-3xl px-5 sm:px-8">
+      <div className="relative z-[20] pt-24 pb-[max(5rem,calc(5rem+env(safe-area-inset-bottom)))]">
+        <div className="mx-auto max-w-3xl pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:px-8">
 
           {/* Header just above the contact card */}
           <header className="mb-8">
@@ -145,9 +145,9 @@ export default function ContactPage() {
                             setTimeout(() => setHasCopiedHelpdesk(false), 1500)
                           })
                         }}
-                        className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-0"
+                        className="inline-flex h-7 w-7 min-h-7 min-w-7 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors touch-action-manipulation focus-visible:outline-none focus-visible:ring-0"
                       >
-                        <Copy className="h-3 w-3" />
+                        <Copy className="h-2.5 w-2.5" />
                       </button>
                       {hasCopiedHelpdesk && (
                         <span className="text-[10px] uppercase tracking-[0.18em] text-white/55">
@@ -160,7 +160,7 @@ export default function ContactPage() {
                     <span className="text-white/45 text-xs uppercase tracking-widest block mb-1">
                       Mobile
                     </span>
-                    <ul className="space-y-1.5">
+                    <ul className="space-y-0.5">
                       <li className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                         <span className="text-white/80">Tanisha V Shetty</span>
                         <div className="flex items-center gap-2">
@@ -174,9 +174,9 @@ export default function ContactPage() {
                             type="button"
                             aria-label="Copy Tanisha V Shetty phone number"
                             onClick={() => copyToClipboard("+918088586578", "tanisha")}
-                            className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-0"
+                            className="inline-flex h-7 w-7 min-h-7 min-w-7 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors touch-action-manipulation focus-visible:outline-none focus-visible:ring-0"
                           >
-                            <Copy className="h-3 w-3" />
+                            <Copy className="h-2.5 w-2.5" />
                           </button>
                           {copiedPhone === "tanisha" && (
                             <span className="text-[10px] uppercase tracking-[0.18em] text-white/55">
@@ -198,9 +198,9 @@ export default function ContactPage() {
                             type="button"
                             aria-label="Copy Syed Javed phone number"
                             onClick={() => copyToClipboard("+917899278471", "syed")}
-                            className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-0"
+                            className="inline-flex h-7 w-7 min-h-7 min-w-7 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors touch-action-manipulation focus-visible:outline-none focus-visible:ring-0"
                           >
-                            <Copy className="h-3 w-3" />
+                            <Copy className="h-2.5 w-2.5" />
                           </button>
                           {copiedPhone === "syed" && (
                             <span className="text-[10px] uppercase tracking-[0.18em] text-white/55">
@@ -222,9 +222,9 @@ export default function ContactPage() {
                             type="button"
                             aria-label="Copy Koushik V phone number"
                             onClick={() => copyToClipboard("+919353195315", "koushik")}
-                            className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors focus-visible:outline-none focus-visible:ring-0"
+                            className="inline-flex h-7 w-7 min-h-7 min-w-7 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors touch-action-manipulation focus-visible:outline-none focus-visible:ring-0"
                           >
-                            <Copy className="h-3 w-3" />
+                            <Copy className="h-2.5 w-2.5" />
                           </button>
                           {copiedPhone === "koushik" && (
                             <span className="text-[10px] uppercase tracking-[0.18em] text-white/55">

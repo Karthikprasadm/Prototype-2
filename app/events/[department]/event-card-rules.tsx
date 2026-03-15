@@ -39,12 +39,12 @@ export function EventCardRules({ rules }: EventCardRulesProps) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div>
-      <h4 className="text-white/90 font-medium mb-1.5">Rules</h4>
+    <div className="text-left">
+      <h4 className="text-white/90 font-medium mb-1.5 text-[13px] sm:text-sm">Rules</h4>
       {/* Mobile: collapsible */}
       <div className="md:hidden">
         <Collapsible open={open} onOpenChange={setOpen}>
-          <CollapsibleTrigger className="flex items-center gap-2 text-white/70 hover:text-white text-sm transition-colors">
+          <CollapsibleTrigger className="flex min-h-[44px] items-center gap-2 text-[13px] text-white/70 hover:text-white transition-colors touch-action-manipulation sm:text-sm">
             <span>{open ? "Hide rules" : "Show rules"}</span>
             <ChevronDown
               className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}

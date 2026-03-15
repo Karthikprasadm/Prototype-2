@@ -141,7 +141,6 @@ export function getScheduleForDay(day: ScheduleDayId): ResolvedScheduleItem[] {
     const resolved = resolveEvent(item.deptId, item.eventName)
     if (!resolved) {
       if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
         console.warn(`[schedule] Unresolved event "${item.eventName}" in dept "${item.deptId}".`)
       }
       return { id: scheduleItemId(item), name: item.displayName ?? item.eventName, start: item.start, end: item.end, displayTime: item.displayTime, color: item.color, glowColor: item.glowColor }

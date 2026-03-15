@@ -171,11 +171,15 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
   return (
     <div style={{
       width: "100%",
+      maxWidth: "100%",
       minHeight: "100vh",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      padding: isMobile ? "18px 0 32px" : "44px 0 72px",
+      overflowX: "hidden",
+      padding: isMobile
+        ? `18px max(20px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left))`
+        : "44px 0 72px",
       background: "transparent",
     }}>
       <style>{`
@@ -270,7 +274,7 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
           display: "flex",
           justifyContent: isMobile ? "center" : "flex-start",
           width: isMobile ? "100%" : "auto",
-          overflowX: isMobile ? "auto" : "visible",
+          overflowX: "hidden",
           overflowY: "visible",
         }}>
           <svg
@@ -499,11 +503,13 @@ export default function EventsSection({ scrollProgress }: EventsSectionProps) {
                   display: "flex",
                   alignItems: "center",
                   gap: isMobile ? 12 : 16,
-                  padding: isMobile ? "10px 0" : "12px 0",
+                  padding: isMobile ? "12px 0" : "12px 0",
+                  minHeight: isMobile ? 44 : undefined,
                   borderBottom: "1px solid rgba(255,255,255,0.14)",
                   animation: `item-in 0.3s ease ${i * 0.05}s both`,
                   textDecoration: "none",
                   cursor: "pointer",
+                  touchAction: "manipulation",
                 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)" }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent" }}
