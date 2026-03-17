@@ -478,9 +478,9 @@ export function SiteNav() {
             position: "fixed", inset: 0, zIndex: 40,
             opacity: isMobileMenuOpen ? 1 : 0,
             pointerEvents: isMobileMenuOpen ? "auto" : "none",
-            background: "rgba(2,2,12,0.35)",
-            backdropFilter: isMobileMenuOpen ? "blur(6px)" : "none",
-            transition: "opacity 300ms ease",
+            background: "rgba(0,0,0,0.28)",
+            backdropFilter: isMobileMenuOpen ? "blur(8px)" : "none",
+            transition: "opacity 240ms ease",
           }}
           onClick={() => setIsMobileMenuOpen(false)}
           aria-hidden
@@ -492,8 +492,8 @@ export function SiteNav() {
             position: "fixed",
             top: "50%", left: "50%",
             zIndex: 50,
-            width: "min(80vw, 280px)",
-            animation: isMobileMenuOpen ? "glassMenuIn 0.35s cubic-bezier(0.22,1,0.36,1) both" : "none",
+            width: "min(78vw, 264px)",
+            animation: isMobileMenuOpen ? "glassMenuIn 0.32s cubic-bezier(0.22,1,0.36,1) both" : "none",
             opacity: isMobileMenuOpen ? 1 : 0,
             pointerEvents: isMobileMenuOpen ? "auto" : "none",
             transform: "translate(-50%, -50%)",
@@ -501,53 +501,36 @@ export function SiteNav() {
         >
           {/* Card surface */}
           <div style={{
-            borderRadius: 20,
+            borderRadius: 18,
             overflow: "hidden",
-            // Slightly more opaque + subtle gradient so items stay readable over busy backgrounds.
-            background: "linear-gradient(180deg, rgba(10,10,12,0.96), rgba(6,6,8,0.94))",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid rgba(255,255,255,0.10)",
-            boxShadow: "0 26px 60px rgba(0,0,0,0.55)",
+            background: "rgba(10,10,12,0.88)",
+            backdropFilter: "blur(22px)",
+            WebkitBackdropFilter: "blur(22px)",
+            border: "1px solid rgba(255,255,255,0.09)",
+            boxShadow: "0 18px 44px rgba(0,0,0,0.52)",
           }}>
-
-            {/* Soft top highlight */}
-            <div
-              aria-hidden
-              style={{
-                position: "absolute",
-                inset: 0,
-                pointerEvents: "none",
-                background:
-                  "radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,0.06), rgba(255,255,255,0.02) 40%, rgba(0,0,0,0) 70%)",
-              }}
-            />
-
 
             {/* Header */}
             <div style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "10px 14px 8px",
-              borderBottom: "1px solid rgba(255,255,255,0.06)",
+              padding: "10px 14px 6px",
+              borderBottom: "1px solid rgba(255,255,255,0.05)",
             }}>
               <span style={{
                 fontFamily: "var(--font-geist-mono), monospace",
-                fontSize: 8, letterSpacing: "0.3em",
-                color: "rgba(255,255,255,0.25)",
+                fontSize: 8, letterSpacing: "0.28em",
+                color: "rgba(255,255,255,0.22)",
                 textTransform: "uppercase",
               }}>
                 Menu
               </span>
-              <div style={{
-                display: "flex", alignItems: "center", gap: 4,
-              }}>
-                <div style={{ width: 4, height: 4, borderRadius: "50%", background: "rgba(59,130,246,0.55)" }} />
-                <div style={{ width: 4, height: 4, borderRadius: "50%", background: "rgba(34,211,238,0.42)" }} />
-              </div>
+              <span style={{ fontSize: 10, color: "rgba(255,255,255,0.18)", letterSpacing: "0.12em" }}>
+                ·
+              </span>
             </div>
 
             {/* Nav items */}
-            <nav style={{ padding: "8px 10px 8px" }}>
+            <nav style={{ padding: "8px 10px 10px" }}>
               {navItems.map(({ href, label, icon: Icon }, index) => {
                 const isActive = activeIndex === index
                 const accent = "rgba(59,130,246,0.95)"
@@ -562,19 +545,15 @@ export function SiteNav() {
                       display: "flex",
                       alignItems: "center",
                       gap: 10,
-                      padding: "10px 10px",
+                      padding: "9px 10px",
                       borderRadius: 14,
                       marginBottom: 6,
                       textDecoration: "none",
                       // Match Events card language: neutral glass cards (no per-item tint).
-                      background: isActive ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.22)",
-                      backdropFilter: "blur(18px)",
-                      WebkitBackdropFilter: "blur(18px)",
-                      border: isActive ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(255,255,255,0.08)",
-                      boxShadow: isActive
-                        ? "0 22px 50px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04), 0 0 22px rgba(59,130,246,0.10)"
-                        : "0 18px 40px rgba(0,0,0,0.35)",
-                      transition: "transform 160ms ease, border-color 180ms ease, box-shadow 220ms ease, background 220ms ease",
+                      background: isActive ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.03)",
+                      border: isActive ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(255,255,255,0.07)",
+                      boxShadow: isActive ? "0 16px 36px rgba(0,0,0,0.45)" : "none",
+                      transition: "transform 160ms ease, border-color 180ms ease, background 200ms ease, box-shadow 220ms ease",
                       animation: isMobileMenuOpen
                         ? `glassItemIn 0.35s cubic-bezier(0.22,1,0.36,1) ${0.1 + index * 0.06}s both`
                         : "none",
@@ -589,20 +568,17 @@ export function SiteNav() {
                         borderRadius: 14,
                         pointerEvents: "none",
                         opacity: isActive ? 1 : 0,
-                        background: "linear-gradient(90deg, rgba(59,130,246,0.18), rgba(255,255,255,0) 55%)",
+                        background: "linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0) 55%)",
                         maskImage: "linear-gradient(#000, #000)",
                       }}
                     />
 
                     {/* Icon */}
                     <div style={{
-                      width: 30, height: 30, borderRadius: 12, flexShrink: 0,
+                      width: 28, height: 28, borderRadius: 10, flexShrink: 0,
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      background: isActive
-                        ? "rgba(255,255,255,0.10)"
-                        : "rgba(255,255,255,0.07)",
-                      border: `1px solid ${isActive ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.10)"}`,
-                      boxShadow: isActive ? "0 0 0 1px rgba(255,255,255,0.05), 0 0 18px rgba(59,130,246,0.10)" : "none",
+                      background: isActive ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.05)",
+                      border: `1px solid ${isActive ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.08)"}`,
                       transition: "all 0.2s ease",
                     }}>
                       <Icon size={14} style={{
@@ -626,9 +602,8 @@ export function SiteNav() {
                     {/* Active indicator */}
                     {isActive && (
                       <div style={{
-                        width: 5, height: 5, borderRadius: "50%", flexShrink: 0,
-                        background: accent,
-                        boxShadow: "0 0 0 3px rgba(59,130,246,0.14), 0 0 16px rgba(59,130,246,0.18)",
+                        width: 4, height: 4, borderRadius: "50%", flexShrink: 0,
+                        background: "rgba(255,255,255,0.65)",
                       }} aria-hidden />
                     )}
                   </Link>
@@ -644,7 +619,7 @@ export function SiteNav() {
               <p style={{
                 fontFamily: "var(--font-geist-mono), monospace",
                 fontSize: 8, letterSpacing: "0.22em",
-                color: "rgba(255,255,255,0.13)",
+                color: "rgba(255,255,255,0.10)",
                 textTransform: "uppercase",
               }}>
                 Luminus · RNSIT · 2026

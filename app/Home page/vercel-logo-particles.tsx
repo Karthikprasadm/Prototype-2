@@ -190,11 +190,12 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
           off.height = canvas.height
           const isMobile = window.innerWidth < 768
           // On mobile: scale so logo fits inside the screen with a small margin; desktop unchanged.
-          const scaleMultiplier = isMobile ? 0.96 : 1.15
+          const scaleMultiplier = isMobile ? 1.02 : 1.15
           const scale = Math.min(off.width / img.width, off.height / img.height) * scaleMultiplier
           const w = img.width * scale
           const h = img.height * scale
-          const x = isMobile ? (off.width - w) / 2 - off.width * 0.02 : (off.width - w) / 2
+          // Keep the hero perfectly centered on mobile (no horizontal bias).
+          const x = (off.width - w) / 2
           const y = isMobile ? (off.height - h) / 2 - off.height * 0.08 : (off.height - h) / 2 - off.height * 0.1
           offCtx.drawImage(img, x, y, w, h)
           imageData = offCtx.getImageData(0, 0, off.width, off.height)
@@ -210,8 +211,8 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       particles = []
       // Tighter gap = more particles in the collected logo; we cull drawing when dispersed for performance.
       const isMobile = isMobileViewport()
-      // Tighter gap on mobile for more particles in the logo (still performant).
-      const gap = isMobile ? Math.max(3, particleGap) : Math.max(2, particleGap)
+      // Tighter gap on mobile for a denser collected logo (still performant).
+      const gap = isMobile ? Math.max(2, particleGap) : Math.max(2, particleGap)
       for (let y = 0; y < canvas.height; y += gap) {
         for (let x = 0; x < canvas.width; x += gap) {
           const i = (y * canvas.width + x) * 4
@@ -226,7 +227,8 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
             if (!isTextPixel) {
               // Desktop: skip a few more non‑text particles to keep total count lighter.
               if (!isMobile && Math.random() < 0.72) continue
-              if (isMobile && Math.random() < (is2026Band ? 0.04 : 0.12)) continue
+              // Mobile: keep the 2026 band much denser so "2026" is clearly visible.
+              if (isMobile && Math.random() < (is2026Band ? 0.0 : 0.12)) continue
             }
 
             const rVal = Math.round(Math.min(255, r + (255 - r) * wf))
@@ -255,7 +257,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
             // Make text – especially the lower "2026" band – denser so the logo is clearly legible when collected.
             if (isTextPixel) {
               const extraCount = isMobile
-                ? (y > canvas.height * 0.55 ? 5 : 3)
+                ? (y > canvas.height * 0.55 ? 6 : 4)
                 // Desktop: keep text dense but with fewer cloned particles for smoother performance.
                 : (y > canvas.height * 0.6 ? 2 : 1)
               for (let n = 0; n < extraCount; n++) {
@@ -276,6 +278,25 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
                   rgbStr: baseParticle.rgbStr
                 })
               }
+            } else if (isMobile && is2026Band) {
+              // If the "2026" pixels are not classified as text by our heuristic,
+              // still boost density in that band so the numbers don't disappear on mobile.
+              particles.push({
+                x: baseParticle.x + (Math.random() - 0.5) * gap,
+                y: baseParticle.y + (Math.random() - 0.5) * gap,
+                tx: x,
+                ty: y,
+                vx: 0,
+                vy: 0,
+                size: baseParticle.size,
+                phase: Math.random() * Math.PI * 2,
+                bgx: Math.random() * canvas.width,
+                bgy: Math.random() * canvas.height,
+                r: baseParticle.r,
+                g: baseParticle.g,
+                b: baseParticle.b,
+                rgbStr: baseParticle.rgbStr
+              })
             }
           }
         }
@@ -427,23 +448,28 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       const readabilityDim = isMobile ? 1 - 0.38 * scrollProgress : 1 - 0.45 * scrollProgress
       const opacityBoost = isMobile ? 1.22 : 1
       // When dispersed (spread across background), draw fewer particles and make them less bright.
-      const dispersedAlphaScale = 1 - 0.4 * disperse
+      const dispersedAlphaScale = isMobile ? 1 - 0.52 * disperse : 1 - 0.4 * disperse
       const skipWhenDispersed = disperse > 0.35
 
       const time0015 = time * 0.0015
       const time0013 = time * 0.0013
       const time003 = time * 0.003
 
-      // On desktop, when heavily dispersed, draw fewer particles by increasing the stride.
+      // When heavily dispersed, draw fewer particles by increasing the stride.
       const desktopSkipStride =
         !isMobile && disperse > 0.7 ? 3
         : !isMobile && disperse > 0.45 ? 2
         : 1
 
+      const mobileSkipStride =
+        isMobile && disperse > 0.75 ? 3
+        : isMobile && disperse > 0.5 ? 2
+        : 1
+
       for (let idx = 0; idx < particles.length; idx++) {
         if (skipWhenDispersed) {
           if (isMobile) {
-            if (idx % 2 === 0) continue
+            if (mobileSkipStride > 1 && idx % mobileSkipStride === 0) continue
           } else if (desktopSkipStride > 1 && idx % desktopSkipStride === 0) {
             continue
           }
@@ -497,7 +523,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
 
         // Boost brightness for the lower "2026" band so it stays clearly visible.
         const is2026Band = p.ty > canvas.height * 0.55
-        const bandBoost = is2026Band ? 1.55 : 1
+        const bandBoost = is2026Band ? (isMobile ? 2.15 : 1.55) : 1
 
         ctx.globalAlpha = Math.min(1, (twinkle * readabilityDim) * opacityBoost * dispersedAlphaScale * bandBoost)
         ctx.fillStyle = p.rgbStr
@@ -509,66 +535,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       // Decay scroll velocity once per frame, not per particle.
       scrollVelocity *= isMobile ? 0.9 : 0.92
 
-      // Draw text below the logo, fades as user scrolls
-      const textAlpha = Math.max(0, 1 - scrollProgress * 3)
-      if (textAlpha > 0) {
-        const isMobile = window.innerWidth < 768
-        const centerX = canvas.width / 2
-        // On mobile, keep the copy higher so it sits clearly in view.
-        const centerY = canvas.height / 2 + canvas.height * (isMobile ? 0.12 : 0.24)
-        ctx.save()
-        ctx.globalAlpha = textAlpha
-        ctx.textAlign = "center"
-        // Mobile: use a font that fits; we'll wrap long lines so we don't have to shrink too much.
-        const baseFont = isMobile ? 13 : 11
-        const fontSize = Math.round(baseFont * dpr)
-        const lineH = (isMobile ? 19 : 20) * dpr
-        const fontFamily = `"Courier New", Courier, "Lucida Console", monospace`
-        const letterSpacingRatio = isMobile ? 0.04 : 0.18
-        // Max width for a line: leave safe margin so text never overflows (letterSpacing can add width).
-        const maxLineWidth = canvas.width * (isMobile ? 0.88 : 0.95)
-
-        let lines: string[]
-        if (isMobile) {
-          lines = [
-            "LUMINUS 2026 MARKS A NEW",
-            "BEGINNING AT RNSIT,",
-            "THE FIRST NATIONAL-LEVEL",
-            "INTERCOLLEGIATE TECH FEST",
-            "IN ITS LANDMARK 25TH YEAR.",
-            "2,000+ STUDENTS. BOLD IDEAS.",
-            "ONE STAGE.",
-          ]
-        } else {
-          lines = [
-            "LUMINUS 2026 IS RNSIT'S FIRST NATIONAL-LEVEL INTERCOLLEGIATE TECH FEST,",
-            "LAUNCHED IN ITS LANDMARK 25TH YEAR TO BEGIN A LEGACY OF INNOVATION.",
-            "WITH 2,000+ STUDENTS NATIONWIDE, IT BLENDS TECHNICAL AND INTERDISCIPLINARY",
-            "CHALLENGES THAT INSPIRE YOU TO COMPETE, GROW, AND SHINE.",
-          ]
-        }
-
-        const textOpacity = isMobile ? 0.75 : 0.38
-        ctx.fillStyle = `rgba(255, 255, 255, ${textOpacity})`
-        ctx.font = `500 ${fontSize}px ${fontFamily}`
-        ctx.letterSpacing = `${Math.round(letterSpacingRatio * fontSize)}px`
-
-        // Ensure no line overflows: scale down only if needed (desktop or if wrapped mobile line still overflows).
-        const longestLine = lines.reduce((a, b) => (a.length > b.length ? a : b), "")
-        const measuredWidth = ctx.measureText(longestLine).width
-        let effectiveFontSize = fontSize
-        if (measuredWidth > maxLineWidth) {
-          effectiveFontSize = Math.max(isMobile ? 11 : 9, Math.floor(fontSize * (maxLineWidth / measuredWidth)))
-          ctx.font = `500 ${effectiveFontSize}px ${fontFamily}`
-          ctx.letterSpacing = `${Math.round(letterSpacingRatio * effectiveFontSize)}px`
-        }
-        const effectiveLineH = (lineH / fontSize) * effectiveFontSize
-
-        lines.forEach((line, idx) => {
-          ctx.fillText(line, centerX, centerY + effectiveLineH * idx)
-        })
-        ctx.restore()
-      }
+      // (Intentionally no tagline text under the logo)
 
       if (useCustomCursor) {
         drawShockwaveRings()
