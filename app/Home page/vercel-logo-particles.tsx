@@ -65,8 +65,8 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       // Fewer fill particles when dispersed for performance; logo density is handled by main particles.
       const count = mobile
         ? Math.min(220, Math.floor((w * h) / (90 * 90)))
-        // On desktop, keep density lower so the animation stays smooth even on mid‑range GPUs.
-        : Math.min(380, Math.floor((w * h) / (80 * 80)))
+        // On desktop, keep density even lighter so scrolling dispersion never feels heavy.
+        : Math.min(260, Math.floor((w * h) / (105 * 105)))
       fillParticles = []
       for (let i = 0; i < count; i++) {
         const r = 200 + Math.floor(Math.random() * 55)
@@ -162,7 +162,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       const max = doc.scrollHeight - window.innerHeight
       scrollVelocity = Math.abs(window.scrollY - lastScrollY)
       // Cap scroll velocity so large scrolls don't cause physics spikes (smoother on PC/laptop).
-      const cap = isMobileViewport() ? 40 : 65
+      const cap = isMobileViewport() ? 40 : 40
       scrollVelocity = Math.min(scrollVelocity, cap)
       lastScrollY = window.scrollY
       const rawProgress = max > 0 ? Math.min(window.scrollY / max, 1) : 1
@@ -224,7 +224,8 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
             // Keep more particles in the lower "2026" band so it stays visible.
             const is2026Band = y > canvas.height * 0.55
             if (!isTextPixel) {
-              if (!isMobile && Math.random() < 0.6) continue
+              // Desktop: skip a few more non‑text particles to keep total count lighter.
+              if (!isMobile && Math.random() < 0.72) continue
               if (isMobile && Math.random() < (is2026Band ? 0.04 : 0.12)) continue
             }
 
@@ -255,7 +256,8 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
             if (isTextPixel) {
               const extraCount = isMobile
                 ? (y > canvas.height * 0.55 ? 5 : 3)
-                : (y > canvas.height * 0.6 ? 3 : 2)
+                // Desktop: keep text dense but with fewer cloned particles for smoother performance.
+                : (y > canvas.height * 0.6 ? 2 : 1)
               for (let n = 0; n < extraCount; n++) {
                 particles.push({
                   x: baseParticle.x + (Math.random() - 0.5) * gap,
@@ -385,7 +387,7 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       // Smooth lerp of scroll progress so dispersion/re-collection is lag-free (no sudden jumps).
-      const lerpSpeed = isMobileViewport() ? 0.2 : 0.14
+      const lerpSpeed = isMobileViewport() ? 0.2 : 0.12
       scrollProgress += (targetScrollProgress - scrollProgress) * lerpSpeed
 
       const isMobile = isMobileViewport()
@@ -412,28 +414,40 @@ export default function LuminusParticles({ startDispersed = false, hideCursor = 
       // Pre-compute constants for the particle loop to maximize rendering performance
       const disperse = scrollProgress
       const invDisperse = 1 - disperse
-      const baseSpring = isMobile ? 0.18 : 0.14
-      const dispersionBoost = invDisperse * (isMobile ? 0.14 : 0.09)
-      const scrollBoost = scrollVelocity * (isMobile ? 0.018 : 0.008)
+      const baseSpring = isMobile ? 0.18 : 0.1
+      const dispersionBoost = invDisperse * (isMobile ? 0.14 : 0.05)
+      const scrollBoost = scrollVelocity * (isMobile ? 0.018 : 0.004)
       const spring = baseSpring + dispersionBoost + scrollBoost
       
-      const noiseStrength = isMobile ? 0.03 : 0.032
-      const maxSpeed = isMobile ? 20 : 24
+      const noiseStrength = isMobile ? 0.03 : 0.02
+      const maxSpeed = isMobile ? 20 : 18
       const maxSpeedSq = maxSpeed * maxSpeed
-      const friction = isMobile ? 0.88 : 0.91
+      const friction = isMobile ? 0.88 : 0.93
       // On mobile use a slightly brighter logo (less dimming by scroll) and higher particle opacity.
       const readabilityDim = isMobile ? 1 - 0.38 * scrollProgress : 1 - 0.45 * scrollProgress
       const opacityBoost = isMobile ? 1.22 : 1
       // When dispersed (spread across background), draw fewer particles and make them less bright.
       const dispersedAlphaScale = 1 - 0.4 * disperse
-      const skipWhenDispersed = disperse > 0.45
+      const skipWhenDispersed = disperse > 0.35
 
       const time0015 = time * 0.0015
       const time0013 = time * 0.0013
       const time003 = time * 0.003
 
+      // On desktop, when heavily dispersed, draw fewer particles by increasing the stride.
+      const desktopSkipStride =
+        !isMobile && disperse > 0.7 ? 3
+        : !isMobile && disperse > 0.45 ? 2
+        : 1
+
       for (let idx = 0; idx < particles.length; idx++) {
-        if (skipWhenDispersed && idx % 2 === 0) continue
+        if (skipWhenDispersed) {
+          if (isMobile) {
+            if (idx % 2 === 0) continue
+          } else if (desktopSkipStride > 1 && idx % desktopSkipStride === 0) {
+            continue
+          }
+        }
 
         const p = particles[idx]
         const targetX = p.tx * invDisperse + p.bgx * disperse
