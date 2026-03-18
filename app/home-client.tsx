@@ -45,9 +45,12 @@ export default function HomeClient() {
         <div
           className={[
             "pointer-events-none absolute left-1/2 top-[calc(50%+6.5rem)] md:top-[calc(50%+9.5rem)] z-20 -translate-x-1/2",
-            "transition-[opacity,transform] duration-500 ease-out",
-            showSponsor ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2",
+            showSponsor ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-1.5 scale-[0.982]",
           ].join(" ")}
+          style={{
+            transition:
+              "opacity 520ms cubic-bezier(0.16, 1, 0.3, 1), transform 620ms cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
         >
           <div className="flex flex-col items-center">
             <div className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.22em] text-white/60 text-center">
