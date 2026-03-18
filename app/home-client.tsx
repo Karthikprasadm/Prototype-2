@@ -41,21 +41,11 @@ export default function HomeClient() {
       <div className="min-h-[100dvh] min-h-[100svh] md:min-h-screen md:h-screen relative md:sticky top-0 z-10 w-full">
         <VercelLogoParticles />
 
-        {/* Mobile-only hero tagline (top space) */}
-        <div className="pointer-events-none absolute left-1/2 top-[max(4.5rem,calc(4rem+env(safe-area-inset-top)))] z-20 w-[min(92vw,40rem)] -translate-x-1/2 px-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] md:hidden">
-          <p className="text-center text-[10px] leading-relaxed tracking-[0.28em] text-white/35">
-            LUMINUS 2026 IS RNSIT&apos;S FIRST NATIONAL-LEVEL INTERCOLLEGIATE TECH FEST,
-            LAUNCHED IN ITS LANDMARK 25TH YEAR TO BEGIN A LEGACY OF INNOVATION. WITH
-            2,000+ STUDENTS NATIONWIDE, IT BLENDS TECHNICAL AND INTERDISCIPLINARY
-            CHALLENGES THAT INSPIRE YOU TO COMPETE, GROW, AND SHINE.
-          </p>
-        </div>
-
         {/* Title sponsor + logo (hide on scroll like corner logos) */}
         <div
           className={[
             "pointer-events-none absolute left-1/2 top-[calc(50%+6.5rem)] md:top-[calc(50%+9.5rem)] z-20 -translate-x-1/2",
-            "transition-[opacity,transform] duration-[520ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+            "transition-[opacity,transform] duration-500 ease-out",
             showSponsor ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2",
           ].join(" ")}
         >
