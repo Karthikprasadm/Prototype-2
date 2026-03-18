@@ -19,6 +19,9 @@ export function SiteBackground() {
     const isContactPage = pathname === "/contact";
     const hidePurpleGradient = isEventsPage || isContactPage;
     const objectsZ = isEventsPage || isContactPage ? "z-[11]" : "z-0";
+    // iOS Safari can intermittently flash a full black fixed layer during heavy
+    // compositing (sticky + canvas + fixed overlays). Keep this overlay desktop-only.
+    const showScrollBlackOverlay = !isEventsPage && !isContactPage && isDesktop === true;
 
     useEffect(() => {
         let ticking = false;
@@ -89,7 +92,7 @@ export function SiteBackground() {
                 and fades back out when you scroll up so the purple returns. */}
             <div
                 className="pointer-events-none fixed inset-0 w-full h-[100vh] bg-black z-[2]"
-                style={{ opacity: !isEventsPage && !isContactPage ? fadeOpacity : 0 }}
+                style={{ opacity: showScrollBlackOverlay ? fadeOpacity : 0 }}
                 aria-hidden
             />
         </>
