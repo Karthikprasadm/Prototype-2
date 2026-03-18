@@ -88,6 +88,11 @@ export default function DepartmentEventsPageClient({ dept }: { dept: DepartmentE
 
                 <CardContent className="px-2.5 pb-2.5 space-y-1.5 text-left text-sm sm:px-6 sm:pb-6 sm:space-y-4">
                   {ev.description && <p className="text-[13px] text-white/80 leading-tight sm:text-sm sm:leading-relaxed">{ev.description}</p>}
+                  {ev.note && (
+                    <p className="text-[12px] font-semibold text-white leading-tight sm:text-xs sm:leading-relaxed">
+                      <span className="font-semibold text-white">NOTE:</span> {ev.note}
+                    </p>
+                  )}
 
                   {ev.eventFlow && (
                     <div className="space-y-0 text-left">

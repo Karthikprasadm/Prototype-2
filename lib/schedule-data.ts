@@ -95,7 +95,7 @@ const scheduleByDay: Record<ScheduleDayId, BaseScheduleItem[]> = {
     { deptId: "cy", eventName: "ZeroDay Arena", start: "09:00", end: "15:30", color: "#22d3ee", glowColor: "#67e8f9" },
     { deptId: "civil", eventName: "Design. Decide. Dominate", start: "09:00", end: "15:30", color: "#9ca3af", glowColor: "#d1d5db" },
     { deptId: "ise", eventName: "Data to Dashboard: SDG Edition", start: "09:00", end: "12:00", color: "#f97316", glowColor: "#fb923c" },
-    { deptId: "mba", eventName: "BizNova", start: "09:00", end: "12:00", color: "#dc2626", glowColor: "#ef4444" },
+    { deptId: "mba", eventName: "Bussiness Tech Quiz", start: "09:00", end: "12:00", color: "#dc2626", glowColor: "#ef4444" },
     { deptId: "ece", eventName: "Embedded Escape Room", start: "09:00", end: "12:00", color: "#22d3ee", glowColor: "#67e8f9" },
     { deptId: "ece", eventName: "Bug Buster", start: "13:00", end: "15:30", color: "#22d3ee", glowColor: "#67e8f9" },
     { deptId: "gaming", eventName: "Valorant", start: "09:00", end: "14:00", color: "#f43f5e", glowColor: "#fb7185" },

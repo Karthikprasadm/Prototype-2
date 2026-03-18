@@ -53,11 +53,11 @@ export default function HomeClient() {
           }}
         >
           <div className="flex flex-col items-center">
-            <div className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.22em] text-white/60 text-center">
+            <div className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-300 text-center">
               Title Sponsor
             </div>
             <a
-              href="https://maps.app.goo.gl/fXdLVmCjLEjjRJGQ7?g_st=aw"
+              href="https://maps.app.goo.gl/7aFENjcdf6Bhzs7QA"
               target="_blank"
               rel="noopener noreferrer"
               className="pointer-events-auto mt-3 inline-flex items-center justify-center"
@@ -71,7 +71,7 @@ export default function HomeClient() {
               />
             </a>
             <a
-              href="https://maps.app.goo.gl/fXdLVmCjLEjjRJGQ7?g_st=aw"
+              href="https://maps.app.goo.gl/7aFENjcdf6Bhzs7QA"
               target="_blank"
               rel="noopener noreferrer"
               className="pointer-events-auto mt-1.5 text-center text-[11px] md:text-xs text-white/55 underline underline-offset-4 decoration-white/35 hover:text-white/70"

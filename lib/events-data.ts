@@ -20,6 +20,8 @@ export interface EventItem {
   date?: string
   /** Short description for the card */
   description?: string
+  /** Optional note shown separately under description */
+  note?: string
   /** Optional extra description block, rendered as an "Event flow" section on the event page. */
   eventFlow?: string
   /** Rules as bullet points (array) or single string (will be split by sentence for display) */
@@ -466,7 +468,7 @@ export const departments: DepartmentEvents[] = [
     fullName: "Business Administration (MBA)",
     events: [
       {
-        name: "BizNova",
+        name: "Bussiness Tech Quiz",
         type: "Flagship",
         teamSize: "2",
         duration: "4 hr",
@@ -474,6 +476,7 @@ export const departments: DepartmentEvents[] = [
         prize: 10000,
         date: "9th April, 2026",
         description: "A fast-paced business quiz on startups, finance, and strategy with live answer reveals, audience engagement, and real-world decision-making rounds.",
+        note: "Open to all engineering and MBA students.",
         rules: "The quiz format and rounds will be explained at the beginning of the event. Participants are expected to report to the venue at least 15–20 minutes prior to the start of the event. Late entries may not be entertained. The decisions of the Quiz Master and organizing committee are final and binding. Any form of malpractice, including use of mobile phones or unfair means, will lead to immediate disqualification.",
         registrationFee: 200,
         contacts: [

@@ -19,25 +19,10 @@ const timeToMinutes = (time: string) => {
   return hours * 60 + minutes
 }
 
-/** Hex color luminance (0–1). Used to keep bar background readable for white text. */
-function hexLuminance(hex: string): number {
-  const n = parseInt(hex.slice(1), 16)
-  const r = (n >> 16) / 255, g = ((n >> 8) & 0xff) / 255, b = (n & 0xff) / 255
-  return 0.299 * r + 0.587 * g + 0.114 * b
-}
-
-const DARK_LUMINANCE = 0.4
-
-/** Bar background: light colors get a tint; dark colors get neutral light bg so white text is readable. */
+/** Bar background tint used uniformly for all timeline bars. */
 function barBackground(color: string): string {
-  if (hexLuminance(color) < DARK_LUMINANCE) return "rgba(255,255,255,0.08)"
-  // For brighter bars, use a slightly stronger tint so the moving starfield
-  // behind doesn't show through as much and cause a flicker effect.
+  // Use a consistent tint across all events so every bar style matches.
   return `${color}29`
-}
-
-function isDarkBar(color: string): boolean {
-  return hexLuminance(color) < DARK_LUMINANCE
 }
 
 function SchedulePageInner() {
@@ -229,7 +214,6 @@ function SchedulePageInner() {
                                 className="relative h-full rounded-2xl border border-white/[0.08] transition-all duration-300 group-hover:scale-[1.01] group-hover:border-white/[0.12] flex items-center px-4 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                                 style={{
                                   backgroundColor: barBackground(event.color),
-                                  ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
                                   boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 16px rgba(0,0,0,0.25)",
                                 }}
                               >
@@ -245,7 +229,6 @@ function SchedulePageInner() {
                                 className="relative h-full rounded-2xl border border-white/[0.08] transition-all duration-300 group-hover:scale-[1.01] group-hover:border-white/[0.12] flex items-center px-4"
                                 style={{
                                   backgroundColor: barBackground(event.color),
-                                  ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
                                   boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 16px rgba(0,0,0,0.25)",
                                 }}
                               >
@@ -280,7 +263,6 @@ function SchedulePageInner() {
                             className="relative block rounded-3xl border border-white/[0.06] p-4 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                             style={{
                               backgroundColor: barBackground(event.color),
-                              ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
                               boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.3)",
                             }}
                           >
@@ -297,7 +279,6 @@ function SchedulePageInner() {
                             className="relative rounded-3xl border border-white/[0.06] p-4"
                             style={{
                               backgroundColor: barBackground(event.color),
-                              ...(isDarkBar(event.color) && { borderLeftWidth: 4, borderLeftColor: event.color }),
                               boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.3)",
                             }}
                           >
