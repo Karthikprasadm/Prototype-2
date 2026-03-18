@@ -22,6 +22,10 @@ export function SiteBackground() {
     // iOS Safari can intermittently flash a full black fixed layer during heavy
     // compositing (sticky + canvas + fixed overlays). Keep this overlay desktop-only.
     const showScrollBlackOverlay = !isEventsPage && !isContactPage && isDesktop === true;
+    // On mobile, fade the purple gradient itself out on scroll so the base black
+    // background is revealed smoothly (without a separate black overlay layer).
+    const mobileGradientOpacity =
+        !isEventsPage && !isContactPage && isDesktop === false ? 1 - fadeOpacity : 1;
 
     useEffect(() => {
         let ticking = false;
@@ -78,7 +82,9 @@ export function SiteBackground() {
                 <div
                     className="pointer-events-none fixed top-0 left-0 w-full h-[100vh] z-[-1]"
                     style={{
-                        background: 'radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.35) 0%, rgba(147, 51, 234, 0.15) 50%, transparent 80%)'
+                        background: 'radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.35) 0%, rgba(147, 51, 234, 0.15) 50%, transparent 80%)',
+                        opacity: mobileGradientOpacity,
+                        transition: "opacity 180ms linear",
                     }}
                     aria-hidden
                 />
